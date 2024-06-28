@@ -50,7 +50,11 @@ public class Leaderboard extends Application {
         
         HBox rank4Container = createNoRankContainer(ranking[3], names[3], scores[3], "ranking-label-leaderboard",
                 "rankingContainerLeft-leaderboard", "rankingContainerRight-leaderboard", 0, 6);
+        
+        
 
+        
+        
         VBox leaderboardContainer = new VBox(20);
         leaderboardContainer.getChildren().addAll(leaderboard, leader, rank1Container, rank2Container, rank3Container, rank4Container);
         leaderboardContainer.setAlignment(Pos.TOP_CENTER);
