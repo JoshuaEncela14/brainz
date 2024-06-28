@@ -41,7 +41,7 @@ public class Login extends Application {
     @Override
     public void start(Stage primaryStage) {
         ImageView eyeImageView = new ImageView(new Image("Blind.png"));
-
+//
         String url = "jdbc:mysql://localhost:3306/login";
         String username = "root";
         String password = "";

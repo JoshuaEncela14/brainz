@@ -164,8 +164,17 @@ public class Questions extends Application {
                 } else {
                     clickedButton.setStyle("-fx-background-color: red");
                 }
+                
+                // Highlight the correct answer
+                for (Button btn : optionButtons) {
+                    HBox content = (HBox) btn.getGraphic();
+                    Label label = (Label) content.getChildren().get(1);
+                    if (label.getText().equals(answers[currentNumber])) {
+                        btn.setStyle("-fx-background-color: green");
+                    }
+                }
 
-                // Disable all buttons to prevent further interaction
+                // Disable all buttons 
                 for (Button btn : optionButtons) {
                     btn.setDisable(true);
                 }
