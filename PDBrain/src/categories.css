@@ -1,0 +1,35 @@
+.button {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #2f3e46;
+    -fx-background-radius: 4;
+    -fx-padding: 10 20; /* Adjust padding to increase button size */
+    -fx-font-size: 14px;
+    -fx-min-width: 120px;
+    -fx-max-width: 240px;
+    -fx-border-insets: 0;
+    -fx-font-weight: bold;
+}
+
+.button-active {
+    -fx-background-color: #2f3e46;
+    -fx-text-fill: #cad2c5;
+    -fx-background-radius: 4;
+    -fx-padding: 10 20; /* Adjust padding to increase button size */
+    -fx-font-size: 14px;
+    -fx-min-width: 120px;
+    -fx-max-width: 240px;
+    -fx-border-insets: 0;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.button-with-background {
+    -fx-background-image: url("brainStage.png");
+    -fx-background-size: cover; /* Adjust as necessary */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+.root {
+    -fx-background-color: #cad2c5;
+}

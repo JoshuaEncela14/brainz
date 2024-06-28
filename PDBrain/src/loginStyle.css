@@ -1,0 +1,113 @@
+#pane{
+    -fx-background-image: url("bgg.png");
+    -fx-background-repeat: stretch;   
+    -fx-background-size: 900 506;
+    -fx-background-position: center center;
+    -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0); 
+}
+
+.label{
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-font-size: 1em;
+	-fx-padding: 0;
+	 -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.textfield-code {
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-cursor: default;
+	
+}
+
+.button {
+	-fx-background-color: #2f3e46;
+	-fx-text-fill: #cad2c5;
+	-fx-background-radius: 4;
+	-fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-min-width: 120px; 
+    -fx-max-width: 500px;
+	-fx-border-insets: 0;
+	-fx-font-weight: bold;
+}
+
+.label-sign-up {
+	-fx-text-fill: #828282;
+	-fx-font-weight: normal;
+	-fx-font-size: 0.90em;
+	-fx-padding: 0;
+	 -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.textfield-code-password {
+	-fx-background-image: url('Blind.png');
+    -fx-background-repeat: no-repeat;
+	-fx-background-position: right center;
+
+
+}
+
+.hyperlink-sign-up {
+	-fx-text-fill: #8D2525;
+	-fx-font-weight: bold;
+	-fx-underline: true;
+	-fx-font-size: 0.90em;
+	-fx-padding: 0;
+	-fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.password-field-container {
+    -fx-border-color: lightgrey;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-padding: 0 10 0 10;
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-pref-height: 40;
+    -fx-pref-width: 250; /* Adjust width as needed */
+}
+
+.name-field-container {
+    -fx-border-color: lightgrey;
+    -fx-border-radius: 5;
+    -fx-border-width: 1;
+    -fx-padding: 0 10 0 10;
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-pref-height: 40;
+    -fx-pref-width: 250; /* Adjust width as needed */
+}
+
+.password-field-container-active {
+    -fx-border-color: blue; /* Change to desired active border color */
+    -fx-text-fill: black;
+}
+
+.password-field {
+	-fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-padding: 5 0 5 0; /* Adjust padding to match the HBox padding */
+    -fx-border-color: transparent;
+    -fx-pref-height: 35;
+}
+
+-incorrect-input {
+	-fx-text-fill: red;
+	-fx-background-color: red;
+}
+
+.toggle-password {
+	-fx-text-fill: blue;
+	-fx-background-color: red;
+}
+
+.not-toggle-password {
+	
+}
