@@ -42,7 +42,7 @@ public class Categories extends Application {
 
 	private void connectToDatabase() {
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/brainz", "root", "");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/brainzmcq_mysql", "root", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
