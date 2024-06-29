@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Questions extends Application {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/brainz";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
     private String[] imageFiles = {"A.png", "B.png", "C.png", "D.png"};
@@ -74,11 +74,16 @@ public class Questions extends Application {
         scene.getStylesheets().add("/CSS/design.css");
         window.setScene(scene);
         window.show();
+
+        // Show first question
+        updateQuestion();
     }
 
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
 
         ColumnConstraints colConstraints = new ColumnConstraints();
         colConstraints.setPercentWidth(100);
@@ -106,7 +111,7 @@ public class Questions extends Application {
         HBox header = new HBox(10, lifelines, questionTracking);
         header.getStyleClass().add("hbox-questions-header");
         header.setAlignment(Pos.CENTER_LEFT);
-       
+
         GridPane.setConstraints(header, 0, 0, GridPane.REMAINING, 1);
 
         return header;
@@ -132,7 +137,6 @@ public class Questions extends Application {
     private HBox createTimer() {
         HBox timer = new HBox();
         timer.getStyleClass().add("hbox-questions-timer");
-        GridPane.setConstraints(timer, 0, 1, GridPane.REMAINING, 1);
 
         Rectangle timerBar = new Rectangle(960, 5, Color.web("#960A0A"));
         timer.getChildren().add(timerBar);
@@ -143,6 +147,8 @@ public class Questions extends Application {
         );
         timeline.setCycleCount(1);
         timeline.play();
+
+        GridPane.setConstraints(timer, 0, 1, GridPane.REMAINING, 1);
 
         return timer;
     }
@@ -157,7 +163,6 @@ public class Questions extends Application {
     }
 
     private VBox createQuestionOptions() {
-
         optionButtons = new Button[4];
         for (int i = 0; i < optionButtons.length; i++) {
             optionButtons[i] = createOptionButton(imageFiles[i]);
@@ -199,7 +204,7 @@ public class Questions extends Application {
                     if (currentNumber < questions.size()) {
                         updateQuestion();
                         for (Button btn : optionButtons) {
-                            btn.setStyle(""); 
+                            btn.setStyle("");
                             btn.setDisable(false);
                         }
                     } else {
@@ -218,16 +223,15 @@ public class Questions extends Application {
         HBox optionOneThree = new HBox(125, optionButtons[0], optionButtons[2]);
         optionOneThree.getStyleClass().add("hbox-question-optionAC");
         optionOneThree.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(optionOneThree, 0, 3, GridPane.REMAINING, 1);
 
         HBox optionTwoFour = new HBox(125, optionButtons[1], optionButtons[3]);
         optionTwoFour.getStyleClass().add("hbox-question-optionAC");
         optionTwoFour.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(optionTwoFour, 0, 4, GridPane.REMAINING, 1);
 
         VBox questionOptions = new VBox(25, optionOneThree, optionTwoFour);
         questionOptions.getStyleClass().add("hbox-question-optionAC");
         questionOptions.setAlignment(Pos.CENTER);
+
         GridPane.setConstraints(questionOptions, 0, 3, GridPane.REMAINING, 1);
 
         return questionOptions;
@@ -249,15 +253,15 @@ public class Questions extends Application {
         answerLabel.getStyleClass().add("label-question-answer");
 
         optionContent.getChildren().addAll(imageView, answerLabel);
+        optionContent.setPadding(new Insets(0, 10, 0, 10));
 
         optionButton.setGraphic(optionContent);
-        optionContent.setPadding(new Insets(0, 10, 0, 10));
 
         return optionButton;
     }
 
     private HBox createQuestionContainer() {
-        questionLabel = new Label(questions.get(currentNumber).getQuestionText());
+        questionLabel = new Label();
         questionLabel.getStyleClass().add("label-question-label");
         questionLabel.setLineSpacing(10);
 
@@ -265,7 +269,7 @@ public class Questions extends Application {
         questionContainer.setAlignment(Pos.CENTER);
         questionContainer.getStyleClass().add("hbox-questions-container");
 
-        GridPane.setConstraints(questionContainer, 0, 2);
+        GridPane.setConstraints(questionContainer, 0, 2, GridPane.REMAINING, 1);
         GridPane.setMargin(questionContainer, new Insets(30, 0, 30, 0));
         GridPane.setHalignment(questionContainer, HPos.CENTER);
 
@@ -273,15 +277,19 @@ public class Questions extends Application {
     }
 
     private void updateQuestion() {
-        Question currentQuestion = questions.get(currentNumber);
-        questionLabel.setText(currentQuestion.getQuestionText());
-        currentQuestionLabel.setText((currentNumber + 1) + " / " + questions.size());
+        if (currentNumber < questions.size()) {
+            Question currentQuestion = questions.get(currentNumber);
+            questionLabel.setText(currentQuestion.getQuestionText());
+            currentQuestionLabel.setText((currentNumber + 1) + " / " + questions.size());
 
-        List<String> choices = currentQuestion.getChoices();
-        for (int i = 0; i < optionButtons.length; i++) {
-            ((Label)((HBox)optionButtons[i].getGraphic()).getChildren().get(1)).setText(choices.get(i));
-            optionButtons[i].setStyle(""); // Reset style
-            optionButtons[i].setDisable(false); // Enable button
+            List<String> choices = currentQuestion.getChoices();
+            for (int i = 0; i < optionButtons.length; i++) {
+                HBox optionContent = (HBox) optionButtons[i].getGraphic();
+                Label answerLabel = (Label) optionContent.getChildren().get(1);
+                answerLabel.setText(choices.get(i));
+                optionButtons[i].setStyle("");
+                optionButtons[i].setDisable(false);
+            }
         }
     }
 
@@ -328,6 +336,14 @@ public class Questions extends Application {
             }
             if (currentQuestion != null) {
                 questions.add(currentQuestion);
+            }
+
+            // Debug prints to verify questions loaded
+            System.out.println("Loaded " + questions.size() + " questions:");
+            for (Question q : questions) {
+                System.out.println("Question: " + q.getQuestionText());
+                System.out.println("Choices: " + q.getChoices());
+                System.out.println("Correct Answer: " + q.getCorrectAnswer());
             }
 
         } catch (SQLException e) {

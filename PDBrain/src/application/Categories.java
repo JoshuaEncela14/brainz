@@ -156,6 +156,7 @@ public class Categories extends Application {
 		return categories;
 	}
 
+<<<<<<< HEAD
 	private void checkStageUnlocks(Button stageOne, Button stageTwo, Button stageThree, Button stageFour, Button stageFive) {
 		try {
 			String sql = "SELECT stageId, overall_score FROM score WHERE UserID = ?";
@@ -209,3 +210,16 @@ public class Categories extends Application {
 		window.close();
 	}
 }
+=======
+        Questions questions = new Questions(category, difficultyId);
+        try {
+            questions.start(new Stage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        window.close();
+    }
+    
+    
+}
+>>>>>>> branch 'main' of https://github.com/JoshuaEncela14/brainz.git
