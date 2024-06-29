@@ -127,11 +127,43 @@ public class Questions extends Application {
             if (text.equals("Pause")) {
                 pauseTimer();
             } else if (text.equals("50:50")) {
-                // 50:50 lifeline logic
+                executeFiftyFiftyLifeline();
+                lifelineButton.setDisable(true); // Disable lifeline after use
             }
         });
 
         return lifelineButton;
+    }
+
+    private void executeFiftyFiftyLifeline() {
+        String correctAnswer = questions.get(currentNumber).getCorrectAnswer();
+        int correctIndex = -1;
+
+        // Find the index of the correct answer
+        for (int i = 0; i < optionButtons.length; i++) {
+            HBox optionContent = (HBox) optionButtons[i].getGraphic();
+            Label answerLabel = (Label) optionContent.getChildren().get(1);
+            if (answerLabel.getText().equals(correctAnswer)) {
+                correctIndex = i;
+                break;
+            }
+        }
+
+        // Disable two incorrect options
+        List<Integer> disableIndices = new ArrayList<>();
+        for (int i = 0; i < optionButtons.length; i++) {
+            if (i != correctIndex) {
+                disableIndices.add(i);
+            }
+        }
+
+        // Randomly disable two incorrect options
+        for (int j = 0; j < 2; j++) {
+            int randomIndex = (int) (Math.random() * disableIndices.size());
+            int indexToDisable = disableIndices.get(randomIndex);
+            optionButtons[indexToDisable].setDisable(true);
+            disableIndices.remove(randomIndex); // Ensure unique disables
+        }
     }
 
     private HBox createTimer() {
@@ -336,14 +368,6 @@ public class Questions extends Application {
             }
             if (currentQuestion != null) {
                 questions.add(currentQuestion);
-            }
-
-            // Debug prints to verify questions loaded
-            System.out.println("Loaded " + questions.size() + " questions:");
-            for (Question q : questions) {
-                System.out.println("Question: " + q.getQuestionText());
-                System.out.println("Choices: " + q.getChoices());
-                System.out.println("Correct Answer: " + q.getCorrectAnswer());
             }
 
         } catch (SQLException e) {
