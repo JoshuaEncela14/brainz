@@ -76,7 +76,7 @@
 
 .lifeline-buttons {
   	-fx-background-color: rgba(217, 217, 217, 0.3);
-    -fx-background-image: url('paimonn.png');
+    -fx-background-image: url('/Images/paimonn.png');
     -fx-background-size: 50% 70%; 
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center;

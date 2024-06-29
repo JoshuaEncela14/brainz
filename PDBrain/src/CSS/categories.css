@@ -24,7 +24,7 @@
 }
 
 .button-with-background {
-    -fx-background-image: url("brainStage.png");
+    -fx-background-image: url("/Images/brainStage.png");
     -fx-background-size: cover; /* Adjust as necessary */
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;

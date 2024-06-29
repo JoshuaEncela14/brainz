@@ -37,15 +37,15 @@ public class Results extends Application {
         grid.getStyleClass().add("result-parent-grid");
 
         // Creating star images
-        ImageView starGood = new ImageView(new Image("yeyStar.png"));
-        ImageView star2Good = new ImageView(new Image("yeyStar.png"));
+        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
+        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
         star2Good.setTranslateY(-30);
-        ImageView star3Good = new ImageView(new Image("yeyStar.png"));
+        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
 
-        ImageView starBad = new ImageView(new Image("notYeyStar.png"));
-        ImageView star2Bad = new ImageView(new Image("notYeyStar.png"));
+        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
+        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
         star2Bad.setTranslateY(-30);
-        ImageView star3Bad = new ImageView(new Image("notYeyStar.png"));
+        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
 
         // Creating components
         Label stageLevel = createLabel("LEVEL 1", "analysis-labels");
@@ -74,7 +74,7 @@ public class Results extends Application {
 
         // Creating scene and setting style
         Scene scene = new Scene(grid, 300, 500);
-        scene.getStylesheets().add("design.css");
+        scene.getStylesheets().add("/CSS/design.css");
         scene.setFill(Color.TRANSPARENT);
 
         // Setting scene to stage
@@ -113,7 +113,7 @@ public class Results extends Application {
     }
 
     private HBox createTimeContent(int timeLeft) {
-        ImageView timerLogo = new ImageView(new Image("Timer.png"));
+        ImageView timerLogo = new ImageView(new Image("/Images/Timer.png"));
         Label answerLabel = new Label(timeLeft + "S");
         answerLabel.getStyleClass().add("timer-labels");
 
@@ -126,7 +126,7 @@ public class Results extends Application {
     }
 
     private HBox createScoreContent(int totalScore, int overAllScore) {
-        ImageView totalScoreLogo = new ImageView(new Image("TotalScore.png"));
+        ImageView totalScoreLogo = new ImageView(new Image("/Images/TotalScore.png"));
         Label totalScoreLabel = new Label(totalScore + "/" + overAllScore);
         totalScoreLabel.getStyleClass().add("timer-labels");
 
@@ -139,9 +139,9 @@ public class Results extends Application {
     }
 
     private HBox createResultButtons(Stage primaryStage) {
-        ImageView home = new ImageView(new Image("Exit.png"));
-        ImageView retake = new ImageView(new Image("Retake.png"));
-        ImageView advance = new ImageView(new Image("Advance.png"));
+        ImageView home = new ImageView(new Image("/Images/Exit.png"));
+        ImageView retake = new ImageView(new Image("/Images/Retake.png"));
+        ImageView advance = new ImageView(new Image("/Images/Advance.png"));
 
         Button homeButton = createButton(home, "Result-buttons", e -> {
            
