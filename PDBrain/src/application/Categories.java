@@ -27,6 +27,7 @@ public class Categories extends Application {
 	private Connection conn;
 
 	public static void main(String[] args) {
+		System.out.println("TEST RUN");
 		launch(args);
 	}
 
@@ -41,7 +42,7 @@ public class Categories extends Application {
 
 	private void connectToDatabase() {
 		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/brainzmcq_mysql", "root", "");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/brainz", "root", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
