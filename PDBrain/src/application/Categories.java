@@ -158,72 +158,72 @@ public class Categories extends Application {
 	}
 
 	private void checkStageUnlocks(Button stageOne, Button stageTwo, Button stageThree, Button stageFour, Button stageFive) {
-	    try {
-	        String sql = "SELECT stageId, overall_score FROM score WHERE UserID = ? AND category = ?";
-	        PreparedStatement pstmt = conn.prepareStatement(sql);
-	        pstmt.setInt(1, userId);
-	        pstmt.setString(2, category);
-	        ResultSet rs = pstmt.executeQuery();
+		try {
+			String sql = "SELECT stageId, overall_score FROM score WHERE UserID = ? AND category = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setString(2, category);
+			ResultSet rs = pstmt.executeQuery();
 
-	        int[] scores = new int[5];
-	        while (rs.next()) {
-	            int stageId = rs.getInt("stageId");
-	            int overallScore = rs.getInt("overall_score");
-	            scores[stageId - 1] = overallScore;
-	        }
+			int[] scores = new int[5];
+			while (rs.next()) {
+				int stageId = rs.getInt("stageId");
+				int overallScore = rs.getInt("overall_score");
+				scores[stageId - 1] = overallScore;
+			}
 
-	        stageTwo.setDisable(scores[0] < 15); // Example score requirement for stage 2
-	        stageThree.setDisable(scores[1] < 15); // Example score requirement for stage 3
-	        stageFour.setDisable(scores[2] < 15); // Example score requirement for stage 4
-	        stageFive.setDisable(scores[3] < 15); // Example score requirement for stage 5
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+			stageTwo.setDisable(scores[0] < 15); // Example score requirement for stage 2
+			stageThree.setDisable(scores[1] < 15); // Example score requirement for stage 3
+			stageFour.setDisable(scores[2] < 15); // Example score requirement for stage 4
+			stageFive.setDisable(scores[3] < 15); // Example score requirement for stage 5
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void openQuestionsStage(String stage) {
-	    switch (stage) {
-	        case "Stage 1":
-	            difficultyId = 1;
-	            break;
-	        case "Stage 2":
-	            difficultyId = 2;
-	            break;
-	        case "Stage 3":
-	            difficultyId = 3;
-	            break;
-	        case "Stage 4":
-	            difficultyId = 4;
-	            break;
-	        case "Stage 5":
-	            difficultyId = 5;
-	            break;
-	        default:
-	            throw new IllegalArgumentException("Invalid stage: " + stage);
-	    }
+		switch (stage) {
+		case "Stage 1":
+			difficultyId = 1;
+			break;
+		case "Stage 2":
+			difficultyId = 2;
+			break;
+		case "Stage 3":
+			difficultyId = 3;
+			break;
+		case "Stage 4":
+			difficultyId = 4;
+			break;
+		case "Stage 5":
+			difficultyId = 5;
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid stage: " + stage);
+		}
 
-	    // Pass the category and difficultyId to the Questions class
-	    Questions questions = new Questions(category, difficultyId);
-	    try {
-	        questions.start(new Stage());
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    window.close();
+		// Pass the category and difficultyId to the Questions class
+		Questions questions = new Questions(category, difficultyId);
+		try {
+			questions.start(new Stage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		window.close();
 	}
-	
+
 	private void recordScore(int userId, String category, int stageId, int score) {
-        try {
-            String sql = "INSERT INTO score (UserID, category, stageId, overall_score) VALUES (?, ?, ?, ?) " +
-                         "ON DUPLICATE KEY UPDATE overall_score = VALUES(overall_score)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, userId);
-            pstmt.setString(2, category);
-            pstmt.setInt(3, stageId);
-            pstmt.setInt(4, score);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-}
+		try {
+			String sql = "INSERT INTO score (UserID, category, stageId, overall_score) VALUES (?, ?, ?, ?) " +
+					"ON DUPLICATE KEY UPDATE overall_score = VALUES(overall_score)";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, userId);
+			pstmt.setString(2, category);
+			pstmt.setInt(3, stageId);
+			pstmt.setInt(4, score);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
