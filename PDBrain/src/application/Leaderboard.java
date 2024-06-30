@@ -68,7 +68,7 @@ public class Leaderboard extends Application {
         GridPane.setMargin(leaderboardContainer, new Insets(-10, 0, 0, 0));
 
         Scene scene = new Scene(grid, 960, 520);
-        scene.getStylesheets().add("design.css");
+        scene.getStylesheets().add("/CSS/design.css");
         window.setScene(scene);
         window.show();
     }

@@ -5,14 +5,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import com.sun.prism.paint.Color;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -21,19 +22,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import at.favre.lib.crypto.bcrypt.BCrypt;
-
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 public class Login extends Application {
 
@@ -54,7 +52,6 @@ public class Login extends Application {
         ImageView eyeImageView = new ImageView(new Image("./Images/Blind.png"));
         ImageView eyeImageView2 = new ImageView(new Image("./Images/Eye.png"));
         
-        
         String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
         String username = "root";
         String password = "";
@@ -62,44 +59,38 @@ public class Login extends Application {
         window = primaryStage;
         window.setTitle("BRAINZZZ");
 
-        // GridPane
         GridPane grid = new GridPane();
-//        grid.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-padding: 10;");
         grid.setAlignment(Pos.TOP_CENTER);
         grid.setPadding(new Insets(20, 10, 10, 20));
         grid.setVgap(5);
         grid.setHgap(10);
         
-     // Set column constraints
         ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPrefWidth(950); // Set the preferred width of the column to 950 pixels
+        columnConstraints.setPrefWidth(950);
         grid.getColumnConstraints().add(columnConstraints);
 
-
-
-        // Name Label
-//        Label nameLabel = new Label();
-        
         Button backButton = new Button();
-        GridPane.setMargin(backButton, new Insets(0, 0, 0, 0));
         backButton.getStyleClass().add("back-Button");
-        
         backButton.setOnAction(e -> {
-        	window.close();
+            try {
+                window.close();
+                Stage HomeStage = new Stage();
+                new Homepage().start(HomeStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
-
         GridPane.setHalignment(backButton, HPos.LEFT);
         GridPane.setConstraints(backButton, 0, 0);
         
         ImageView logo = new ImageView(new Image("/Images/logooo.png"));
         GridPane.setHalignment(logo, HPos.CENTER);
         grid.addRow(1, logo);
-        
-        HBox nameLabel = new HBox();
-        nameLabel.getChildren().add(enterUsername);
+
+        HBox nameLabel = new HBox(enterUsername);
         nameLabel.setAlignment(Pos.CENTER_LEFT); 
-        GridPane.setHalignment(nameLabel, HPos.CENTER);
         nameLabel.setStyle("-fx-max-width: 500");
+        GridPane.setHalignment(nameLabel, HPos.CENTER);
         GridPane.setConstraints(nameLabel, 0, 4);
 
         TextField nameInput = new TextField();
@@ -110,13 +101,11 @@ public class Login extends Application {
         GridPane.setHalignment(nameInput, HPos.CENTER);
         GridPane.setConstraints(nameInput, 0, 5);
 
-        // Password Label
-        HBox passLabel = new HBox();
+        HBox passLabel = new HBox(enterPassword);
         passLabel.setAlignment(Pos.CENTER_LEFT); 
-        GridPane.setHalignment(passLabel, HPos.CENTER);
         passLabel.setStyle("-fx-max-width: 500");
+        GridPane.setHalignment(passLabel, HPos.CENTER);
         GridPane.setConstraints(passLabel, 0, 7);
-        passLabel.getChildren().add(enterPassword);
         GridPane.setMargin(passLabel, new Insets(10, 0, 0, 0));
 
         PasswordField passInput = new PasswordField();
@@ -125,39 +114,31 @@ public class Login extends Application {
         passInput.setPrefWidth(500);
         passInput.getStyleClass().add("password-field");
 
-
-        
         eyeImageView2.setFitHeight(24);
         eyeImageView2.setFitWidth(24);
         eyeImageView2.setPreserveRatio(true);
 
         Text passText = new Text();
-        passText.setVisible(false); // Initially invisible
-        passText.getStyleClass().add("toggle-password"); // Add CSS styling if needed
+        passText.setVisible(false);
+        passText.getStyleClass().add("toggle-password");
         
         StackPane passPane = new StackPane(passInput, passText, eyeImageView);
         passPane.setAlignment(Pos.CENTER_LEFT);
         passPane.getStyleClass().add("password-field");
         GridPane.setConstraints(passPane, 0, 8);
-        
-        // HBox to contain PasswordField and ImageView
-        HBox passBox = new HBox(passPane, eyeImageView); // Include passText in the HBox
-        
-      
+
+        HBox passBox = new HBox(passPane, eyeImageView);
         passBox.getStyleClass().add("password-field-container");
-        GridPane.setConstraints(passBox, 0, 8);
         passBox.setAlignment(Pos.CENTER_LEFT);
+        GridPane.setConstraints(passBox, 0, 8);
         GridPane.setHalignment(passBox, HPos.CENTER);
 
- 
-        
         eyeImageView.setOnMousePressed(event -> {
             if (passInput.isVisible()) {
                 passText.setText(passInput.getText());
                 passText.setVisible(true);
                 passInput.setVisible(false);
                 eyeImageView.setImage(new Image("/Images/Eye.png"));
-      
             } else {
                 passInput.setText(passText.getText());
                 passInput.setVisible(true);
@@ -173,14 +154,13 @@ public class Login extends Application {
         HBox hboxlog = new HBox(loginButton);
         hboxlog.setAlignment(Pos.CENTER);
         GridPane.setConstraints(hboxlog, 0, 14);
+
         loginButton.getStyleClass().add("button-login");
 
-        // Database connection and login logic
         loginButton.setOnAction(e -> {
             login(nameInput, passInput, nameLabel, passLabel, passBox, url, username, password);
         });
 
-        // Enter key triggers login
         passInput.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 login(nameInput, passInput, nameLabel, passLabel, passBox, url, username, password);
@@ -191,10 +171,8 @@ public class Login extends Application {
             if (event.getCode() == KeyCode.ENTER) {
                 login(nameInput, passInput, nameLabel, passLabel, passBox, url, username, password);
             }
-            
         });
 
-        // Sign-up Link
         Label signUpLabel = new Label("Don't Have an Account? ");
         Hyperlink signUpLink = new Hyperlink("Sign-up");
         signUpLink.getStyleClass().add("hyperlink-sign-up");
@@ -213,20 +191,15 @@ public class Login extends Application {
                 ex.printStackTrace();
             }
         });
-        
-//        VBox containterr = new VBox();
-//        containterr.getChildren().addAll(null)
 
-        // Adding components to grid
         grid.getChildren().addAll(
-        		backButton,
+                backButton,
                 nameLabel, nameInput,
                 passLabel, passBox,
                 hboxlog,
                 signUpBox
         );
 
-        // Focus listener for styling
         nameInput.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 nameInput.getStyleClass().add("password-field-container-active");
@@ -243,10 +216,8 @@ public class Login extends Application {
             }
         });
 
-        // Scene and CSS
         Scene scene = new Scene(grid, 960, 520);
         scene.getStylesheets().add("./CSS/loginStyle.css");
-        
         
         window.setScene(scene);
         window.show();
@@ -255,7 +226,6 @@ public class Login extends Application {
     private void login(TextField nameInput, PasswordField passInput, HBox nameLabel, HBox passLabel, HBox passBox, String url, String username, String password) {
         String name = nameInput.getText();
         String passwordValue = passInput.getText();
-        
 
         boolean valid = true;
 
@@ -274,56 +244,65 @@ public class Login extends Application {
         if (valid) {
             try {
                 Connection connection = DriverManager.getConnection(url, username, password);
-                String sql = "SELECT * FROM logs WHERE name = ?";
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setString(1, name);
+                String sqlSelect = "SELECT * FROM logs WHERE name = ?";
+                PreparedStatement statementSelect = connection.prepareStatement(sqlSelect);
+                statementSelect.setString(1, name);
 
-                ResultSet resultSet = statement.executeQuery();
+                ResultSet resultSet = statementSelect.executeQuery();
 
                 if (resultSet.next()) {
-                    // Username exists, now check password
                     String storedHash = resultSet.getString("password");
 
                     BCrypt.Result result = BCrypt.verifyer().verify(passwordValue.toCharArray(), storedHash);
                     if (result.verified) {
+
+                        int userId = resultSet.getInt("id");
+                        String sqlUpdate = "UPDATE logs SET loggedIn = 1 WHERE id = ?";
+                        PreparedStatement statementUpdate = connection.prepareStatement(sqlUpdate);
+                        statementUpdate.setInt(1, userId);
+                        statementUpdate.executeUpdate();
+
+                        Homepage.loggedIn = true;
                         System.out.println("Login successful!");
+
                         try {
-                            window.close();
-                            Stage catStage = new Stage();
-                            new Categories().start(catStage);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                        	window.close();
+                           Stage catStage = new Stage();
+                           new Categories().start(catStage);
+                       } catch (Exception ex) {
+                           ex.printStackTrace();
+                       }
+                        
                     } else {
+                        // Handle incorrect password
                         passBox.setStyle("-fx-border-color: red;");
                         passLabel.setStyle("-fx-text-fill: red;");
-                        passLabel.setAlignment(Pos.CENTER_LEFT); 
+                        passLabel.setAlignment(Pos.CENTER_LEFT);
                         GridPane.setHalignment(passLabel, HPos.CENTER);
                         passLabel.setStyle("-fx-max-width: 500");
                         enterPassword.setImage(new Image("./Images/Incorrect_password.png"));
                         shake(passInput);
-                        valid = false;
                     }
                 } else {
+                    // Handle username not found
                     nameInput.setStyle("-fx-border-color: red;");
                     nameLabel.setStyle("-fx-text-fill: red;");
-                    nameLabel.setAlignment(Pos.CENTER_LEFT); 
+                    nameLabel.setAlignment(Pos.CENTER_LEFT);
                     GridPane.setHalignment(nameLabel, HPos.CENTER);
                     nameLabel.setStyle("-fx-max-width: 500");
                     enterUsername.setImage(new Image("./Images/Username_not_found.png"));
-
                     shake(nameInput);
-                    valid = false;
                 }
 
                 resultSet.close();
-                statement.close();
+                statementSelect.close();
                 connection.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
     }
+
 
     private void shake(TextField textField) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(50), textField);
