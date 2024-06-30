@@ -149,8 +149,8 @@ public class Results extends Application {
             try {
             	 primaryStage.close();
                  questionStage.close(); 
-                Stage loginStage = new Stage();
-                new Login().start(loginStage);
+                Stage homeStage = new Stage();
+                new Homepage().start(homeStage);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

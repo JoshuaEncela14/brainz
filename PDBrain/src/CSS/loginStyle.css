@@ -16,6 +16,35 @@
 
 }
 
+.homepage-play-buttons {
+	-fx-background-image: url('/Images/Homepage_play.png');
+	-fx-background-color: transparent;
+	-fx-pref-width: 130px;
+	-fx-min-height: 67px;
+	
+}
+
+.homepage-leaderboard-buttons {
+	-fx-background-image: url('/Images/Homepage_leaderboard.png');
+	-fx-background-color: transparent;
+	-fx-pref-width: 300px;
+	-fx-min-height: 62;
+}
+
+.homepage-quit-buttons {
+	-fx-background-image: url('/Images/Homepage_quit.png');
+	-fx-background-color: transparent;
+	-fx-pref-width: 120px;
+	-fx-min-height: 67;
+}
+
+.settings-button {
+	-fx-background-image: url('/Images/Settings.png');
+	-fx-pref-width: 105px;
+	-fx-min-height: 92;
+	-fx-background-color: transparent;
+}
+
 .back-Button {
 	-fx-background-image: url('/Images/Back_button.png');
 	-fx-pref-width: 85px;
@@ -153,6 +182,7 @@
     -fx-padding: 5 0 5 0; /* Adjust padding to match the HBox padding */
     -fx-border-color: transparent;
     -fx-pref-height: 35;
+    -fx-pref-width: 500;
 }
 
 -incorrect-input {
