@@ -29,7 +29,7 @@ import java.util.List;
 
 public class Questions extends Application {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/brainz";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
     private String[] imageFiles = {"A.png", "B.png", "C.png", "D.png"};
@@ -126,6 +126,7 @@ public class Questions extends Application {
         lifelineButton.setOnAction(event -> {
             if (text.equals("Pause")) {
                 pauseTimer();
+                lifelineButton.setDisable(true); 
             } else if (text.equals("50:50")) {
                 executeFiftyFiftyLifeline();
                 lifelineButton.setDisable(true); // Disable lifeline after use
