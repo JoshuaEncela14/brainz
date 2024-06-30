@@ -82,8 +82,6 @@ public class Questions extends Application {
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20));
 
         ColumnConstraints colConstraints = new ColumnConstraints();
         colConstraints.setPercentWidth(100);
