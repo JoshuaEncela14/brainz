@@ -1,6 +1,6 @@
 package application;
 
-import javafx.animation.ScaleTransition;
+import javafx.animation.ScaleTransition; 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -182,7 +182,13 @@ public class Categories extends Application {
                 scores[stageId - 1] = overallScore;
             }
 
-            stageTwo.setDisable(scores[0] < 15); // Example score requirement for stage 2
+         // Unlocking logic for Stage 2
+	        if (scores[0] >= 3 && scores[0] <= 5) {
+	            stageTwo.setDisable(false);
+	        } else {
+	            stageTwo.setDisable(true);
+	        }
+	     // Additional unlocking logic can be added here
             stageThree.setDisable(scores[1] < 15); // Example score requirement for stage 3
             stageFour.setDisable(scores[2] < 15); // Example score requirement for stage 4
             stageFive.setDisable(scores[3] < 15); // Example score requirement for stage 5
@@ -221,6 +227,21 @@ public class Categories extends Application {
         }
         window.close();
     }
+    
+    public void recordScore(int userId, String category, int stageId, int score) {
+	    try {
+	        String sql = "INSERT INTO score (UserID, category, stageId, overall_score) VALUES (?, ?, ?, ?) " +
+	                "ON DUPLICATE KEY UPDATE overall_score = VALUES(overall_score)";
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, userId);
+	        pstmt.setString(2, category);
+	        pstmt.setInt(3, stageId);
+	        pstmt.setInt(4, score);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
     private void addHoverEffect(Button button) {
         // Define scale transitions for hover effect
