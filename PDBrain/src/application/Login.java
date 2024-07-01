@@ -291,6 +291,8 @@ public class Login extends Application {
                     GridPane.setHalignment(nameLabel, HPos.CENTER);
                     nameLabel.setStyle("-fx-max-width: 500");
                     enterUsername.setImage(new Image("./Images/Username_not_found.png"));
+                    
+                    
                     shake(nameInput);
                 }
 

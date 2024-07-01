@@ -441,4 +441,5 @@ class Question {
     public String getCorrectAnswer() {
         return correctAnswer;
     }
+>>>>>>> branch 'main' of https://github.com/JoshuaEncela14/brainz.git
 }
