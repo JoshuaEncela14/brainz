@@ -197,15 +197,6 @@ public class Questions extends Application {
         return timer;
     }
 
-//    private void pauseTimer() {
-//        timeline.pause();
-//
-//        Timeline resumeTimeline = new Timeline(
-//                new KeyFrame(Duration.seconds(10), e -> timeline.play())
-//        );
-//        resumeTimeline.play();
-//    }
-
     private void pauseTimer() {
         timeline.pause();
 
