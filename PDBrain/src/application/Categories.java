@@ -270,4 +270,3 @@ public class Categories extends Application {
         }
     }
 }
->>>>>>> branch 'main' of https://github.com/JoshuaEncela14/brainz.git
