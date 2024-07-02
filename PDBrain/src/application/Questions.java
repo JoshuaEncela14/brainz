@@ -29,6 +29,8 @@ import java.util.List;
 
 public class Questions extends Application {
 
+    private String category = "english";
+
     private static final String DB_URL = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
@@ -124,7 +126,7 @@ public class Questions extends Application {
         lifelineButton.setOnAction(event -> {
             if (text.equals("Pause")) {
                 pauseTimer();
-                lifelineButton.setDisable(true); 
+                lifelineButton.setDisable(true);
             } else if (text.equals("50:50")) {
                 executeFiftyFiftyLifeline();
                 lifelineButton.setDisable(true); // Disable lifeline after use
@@ -208,6 +210,8 @@ public class Questions extends Application {
                 // Check if the answer is correct
                 if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
                     clickedButton.setStyle("-fx-background-color: green");
+                    // Update score when answer is correct
+                    updateScore(category, selectedCategory);
                 } else {
                     clickedButton.setStyle("-fx-background-color: red");
                 }
@@ -320,6 +324,9 @@ public class Questions extends Application {
                 answerLabel.setText(choices.get(i));
                 optionButtons[i].setStyle("");
                 optionButtons[i].setDisable(false);
+
+                // Clear previous styles
+                optionButtons[i].setStyle("");
             }
         }
     }
@@ -373,6 +380,74 @@ public class Questions extends Application {
             e.printStackTrace();
         }
     }
+
+//    private void updateEnglishScore(String username) {
+//        Connection conn = null;
+//        Statement stmt = null;
+//
+//        try {
+//            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+//            stmt = conn.createStatement();
+//
+//            String sql = "UPDATE score SET en_score = en_score + 1 WHERE category = '" + username + "'";
+//            stmt.executeUpdate(sql);
+//
+//            System.out.println("English score updated successfully for user: " + username);
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (stmt != null) stmt.close();
+//                if (conn != null) conn.close();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+    
+    private void updateScore(String username, String category) {
+        Connection conn = null;
+        Statement stmt = null;
+        String columnName = "";
+
+        switch (category) {
+            case "english":
+                columnName = "en_score";
+                break;
+            case "math":
+                columnName = "math_score";
+                break;
+            case "science":
+                columnName = "sci_score";
+                break;
+            default:
+                // Handle unexpected category (if needed)
+                return;
+        }
+
+        try {
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            stmt = conn.createStatement();
+
+            String sql = "UPDATE score SET " + columnName + " = " + columnName + " + 1 WHERE category = '" + username + "'";
+            stmt.executeUpdate(sql);
+
+            System.out.println(category + " score updated successfully for user: " + username);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }
 
 class Question {
@@ -401,6 +476,6 @@ class Question {
     }
 
     public String getCorrectAnswer() {
-        return correctAnswer; 
+        return correctAnswer;
     }
 }

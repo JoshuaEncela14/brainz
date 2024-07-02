@@ -330,8 +330,7 @@ public class Signup extends Application {
         if (name.isEmpty()) {
             nameInput.setStyle("-fx-border-color: red;");
             nameLabel.setStyle("-fx-text-fill: red;");
-            nameLabel.setAlignment(Pos.CENTER_LEFT); 
-            GridPane.setHalignment(nameLabel, HPos.CENTER);
+            nameLabel.setAlignment(Pos.CENTER_LEFT);
             nameLabel.setStyle("-fx-max-width: 500");
             enterUsername.setImage(new Image("./Images/Wrong_name.png"));
             shake(nameInput);
@@ -339,8 +338,7 @@ public class Signup extends Application {
         } else if (passwordValue.isEmpty()) {
             passBox.setStyle("-fx-border-color: red;");
             passLabel.setStyle("-fx-text-fill: red;");
-            passLabel.setAlignment(Pos.CENTER_LEFT); 
-            GridPane.setHalignment(passLabel, HPos.CENTER);
+            passLabel.setAlignment(Pos.CENTER_LEFT);
             passLabel.setStyle("-fx-max-width: 500");
             enterPassword.setImage(new Image("./Images/Wrong_password.png"));
             shake(passInput);
@@ -348,28 +346,25 @@ public class Signup extends Application {
         } else if (confirmValue.isEmpty()) {
             confirmPassBox.setStyle("-fx-border-color: red;");
             confirmLabel.setStyle("-fx-text-fill: red;");
-            confirmLabel.setAlignment(Pos.CENTER_LEFT); 
-            GridPane.setHalignment(confirmLabel, HPos.CENTER);
+            confirmLabel.setAlignment(Pos.CENTER_LEFT);
             confirmLabel.setStyle("-fx-max-width: 500");
             confirmPassword.setImage(new Image("./Images/Confirm_password_no_input.png"));
             shake(confirmInput);
             valid = false;
-            
+
         } else if (!passwordValue.equals(confirmValue)) {
             passBox.setStyle("-fx-border-color: red;");
             passLabel.setStyle("-fx-text-fill: red;");
             shake(passInput);
             confirmPassBox.setStyle("-fx-border-color: red;");
             confirmLabel.setStyle("-fx-text-fill: red;");
-            
-            passLabel.setAlignment(Pos.CENTER_LEFT); 
-            GridPane.setHalignment(passLabel, HPos.CENTER);
+
+            passLabel.setAlignment(Pos.CENTER_LEFT);
             passLabel.setStyle("-fx-max-width: 500");
             enterPassword.setImage(new Image("./Images/Password_do_not_match.png"));
             GridPane.setMargin(passLabel, new Insets(6, 0, 0, 0));
-            
-            confirmLabel.setAlignment(Pos.CENTER_LEFT); 
-            GridPane.setHalignment(confirmLabel, HPos.CENTER);
+
+            confirmLabel.setAlignment(Pos.CENTER_LEFT);
             confirmLabel.setStyle("-fx-max-width: 500");
             confirmPassword.setImage(new Image("./Images/Password_do_not_match.png"));
             shake(confirmInput);
@@ -388,44 +383,54 @@ public class Signup extends Application {
                 if (resultSet.next()) {
                     nameInput.setStyle("-fx-border-color: red;");
                     nameLabel.setStyle("-fx-text-fill: red;");
-                    nameLabel.setAlignment(Pos.CENTER_LEFT); 
-                    GridPane.setHalignment(nameLabel, HPos.CENTER);
+                    nameLabel.setAlignment(Pos.CENTER_LEFT);
                     nameLabel.setStyle("-fx-max-width: 500");
                     enterUsername.setImage(new Image("./Images/Username_taken.png"));
                     GridPane.setMargin(nameLabel, new Insets(0, 0, 2, 0));
-//                    nameLabel.setText("Username taken");
                     shake(nameInput);
                 } else {
+                    // Insert into logs table and retrieve generated keys
                     String insertSql = "INSERT INTO `logs` (name, password) VALUES (?, ?)";
-                    PreparedStatement insertStatement = connection.prepareStatement(insertSql);
+                    PreparedStatement insertStatement = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS);
                     insertStatement.setString(1, name);
                     insertStatement.setString(2, hashedPassword);
-                        int rowsInserted = insertStatement.executeUpdate();
 
-                        if (rowsInserted > 0) {
-                            System.out.println("Account Created");
-                            try {
-                                window.close();
-                                Stage loginStage = new Stage();
-                                new Login().start(loginStage);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
+                    int rowsInserted = insertStatement.executeUpdate();
 
-                        insertStatement.close();
+                    // Retrieve generated keys
+                    int userID = -1;
+                    ResultSet generatedKeys = insertStatement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        userID = generatedKeys.getInt(1);
                     }
 
-                    resultSet.close();
-                    checkStatement.close();
-                    connection.close();
-                } catch (SQLException ex) {
-                    System.out.println("Connection failed or error in SQL statement!");
-                    ex.printStackTrace();
+                    // Close resources
+                    insertStatement.close();
+                    generatedKeys.close();
+
+                    if (rowsInserted > 0 && userID != -1) {
+                        // Insert initial score into score table
+                        insertScore(userID, 0);
+
+                        System.out.println("Account Created");
+
+                        // Close signup window and open login window
+                        window.close();
+                        Stage loginStage = new Stage();
+                        new Login().start(loginStage);
+                    }
                 }
+
+                resultSet.close();
+                checkStatement.close();
+                connection.close();
+            } catch (SQLException ex) {
+                System.out.println("Connection failed or error in SQL statement!");
+                ex.printStackTrace();
             }
         }
 
+    }
         private void shake(TextField textField) {
             TranslateTransition tt = new TranslateTransition(Duration.millis(50), textField);
             tt.setFromX(0);
@@ -434,5 +439,30 @@ public class Signup extends Application {
             tt.setAutoReverse(true);
             tt.play();
         }
+        
+        private void insertScore(int userID, int score) {
+            String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
+            String username = "root";
+            String password = "";
+
+            try (Connection connection = DriverManager.getConnection(url, username, password)) {
+                String insertSql = "INSERT INTO score (UserID, overall_score, en_score, sci_score, math_score) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertSql);
+                insertStatement.setInt(1, userID);
+                insertStatement.setInt(2, score);
+                insertStatement.setInt(3, 0); // Provide a default value for en_score
+                insertStatement.setInt(4, 0); 
+                insertStatement.setInt(5, 0); 
+
+                int rowsInserted = insertStatement.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("Score inserted successfully.");
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error inserting score: " + ex.getMessage());
+            }
+        }
+
+
         
 }
