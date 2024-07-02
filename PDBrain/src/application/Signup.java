@@ -439,7 +439,7 @@ public class Signup extends Application {
             tt.setAutoReverse(true);
             tt.play();
         }
-        
+     // hello
         private void insertScore(int userID, int score) {
             String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
             String username = "root";
