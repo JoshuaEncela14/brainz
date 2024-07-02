@@ -73,7 +73,6 @@ public class Login extends Application {
         Button backButton = new Button();
         backButton.getStyleClass().add("back-Button");
         backButton.setOnAction(e -> {
-        	resetLoggedInStatus(url, username, password);
             try {
                 window.close();
                 Stage HomeStage = new Stage();

@@ -1,6 +1,10 @@
 package application;
 //hello
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javafx.application.Application;
 import javafx.geometry.HPos;
@@ -27,6 +31,11 @@ public class Homepage extends Application {
 
     private Button musicButton; // Declare logoutButton as an instance variable
     private boolean musicPlaying = true;
+    
+    
+    String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
+    String username = "root";
+    String password = "";
 
     public static void main(String[] args) {
         launch(args);
@@ -38,6 +47,7 @@ public class Homepage extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         window = primaryStage;
         window.setTitle("BRAINZZZ");
+        
 
         GridPane grid = createGridPane();
         grid.getStyleClass().add("root-gridpane"); 
@@ -83,7 +93,7 @@ public class Homepage extends Application {
     }
 
     private HBox createHeaderContainer() {
-        Button logoutButton = createButton("homepage-logout-buttons", this::handleExitButton);
+        Button logoutButton = createButton("homepage-logout-buttons", this::handlelogoutButton);
         Button leaderboardButton = createButton("homepage-leaderboard-buttons", this::handleLeaderboardButton);
         musicButton = createButton("homepage-sound-buttons", this::handleSoundButton);
         Button exitButton = createButton("homepage-quit-buttons", this::handleExitButton);
@@ -127,6 +137,19 @@ public class Homepage extends Application {
     private void handleExitButton() {
 
         window.close();
+        
+    }
+    
+    private void handlelogoutButton() {
+        
+    	resetLoggedInStatus(url, username, password);
+    	
+    	try {
+        	Stage LoginStage = new Stage();
+            new Login().start(LoginStage);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void handleSoundButton() {
@@ -176,6 +199,19 @@ public class Homepage extends Application {
             new Leaderboard().start(leaderboardStage);
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+    
+
+    private void resetLoggedInStatus(String url, String username, String password) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            String sqlReset = "UPDATE logs SET loggedIn = 0";
+            try (PreparedStatement statement = connection.prepareStatement(sqlReset)) {
+                int rowsUpdated = statement.executeUpdate();
+                System.out.println("Rows updated to loggedIn = 0: " + rowsUpdated);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

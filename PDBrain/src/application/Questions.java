@@ -430,10 +430,24 @@ public class Questions extends Application {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             stmt = conn.createStatement();
 
-            String sql = "UPDATE score SET " + columnName + " = " + columnName + " + 1 WHERE category = '" + username + "'";
+            // Query to retrieve userId from logs where loggedIn is 1
+            String userIdQuery = "SELECT id FROM logs WHERE loggedIn = 1";
+            ResultSet rs = stmt.executeQuery(userIdQuery);
+            
+            int userId = -1; // Default value for userId
+            
+            if (rs.next()) {
+                userId = rs.getInt("id");
+            } else {
+                System.out.println("No userId found for loggedIn = 1");
+                return;
+            }
+
+            // Update score for the retrieved userId
+            String sql = "UPDATE score SET " + columnName + " = " + columnName + " + 1 WHERE UserId = " + userId;
             stmt.executeUpdate(sql);
 
-            System.out.println(category + " score updated successfully for user: " + username);
+            System.out.println(category + " score updated successfully for user with userId: " + userId);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -446,6 +460,8 @@ public class Questions extends Application {
             }
         }
     }
+
+
 
 
 }
