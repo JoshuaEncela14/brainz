@@ -1,6 +1,6 @@
 package application;
 
-import javafx.animation.KeyFrame;
+import javafx.animation.KeyFrame; 
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -38,6 +38,8 @@ public class Questions extends Application {
     private int currentNumber = 0;
     private Timeline timeline;
 
+    private int score = 0;
+    
     private List<Question> questions = new ArrayList<>();
     private Label questionLabel;
     private Label currentQuestionLabel;
@@ -45,6 +47,9 @@ public class Questions extends Application {
 
     private String selectedCategory;
     private int selectedDifficulty;
+    
+    private long startTime; // Time when the quiz starts
+    private long[] questionTimes; // Array to store time spent on each question
 
     public Questions(String selectedCategory, int selectedDifficulty) {
         this.selectedCategory = selectedCategory;
@@ -174,7 +179,15 @@ public class Questions extends Application {
 
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(timerBar.widthProperty(), 960)),
-                new KeyFrame(Duration.seconds(30), new KeyValue(timerBar.widthProperty(), 0))
+                new KeyFrame(Duration.seconds(25), e -> {
+                    // When timer ends, move to next question
+                    currentNumber++;
+                    if (currentNumber < questions.size()) {
+                        updateQuestion();
+                    } else {
+                        showResults();
+                    }
+                }, new KeyValue(timerBar.widthProperty(), 0))
         );
         timeline.setCycleCount(1);
         timeline.play();
@@ -184,15 +197,38 @@ public class Questions extends Application {
         return timer;
     }
 
+//    private void pauseTimer() {
+//        timeline.pause();
+//
+//        Timeline resumeTimeline = new Timeline(
+//                new KeyFrame(Duration.seconds(10), e -> timeline.play())
+//        );
+//        resumeTimeline.play();
+//    }
+
     private void pauseTimer() {
         timeline.pause();
+
+        timeline.setOnFinished(event -> {
+            currentNumber++;
+            if (currentNumber < questions.size()) {
+                updateQuestion();
+            } else {
+                Results resultWindow = new Results(window, score, null);  // Pass score to Results
+                try {
+                    resultWindow.start(new Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         Timeline resumeTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(10), e -> timeline.play())
         );
         resumeTimeline.play();
     }
-
+    
     private VBox createQuestionOptions() {
         optionButtons = new Button[4];
         for (int i = 0; i < optionButtons.length; i++) {
@@ -200,55 +236,56 @@ public class Questions extends Application {
         }
 
         for (Button button : optionButtons) {
-            button.setOnAction(e -> {
-                Button clickedButton = (Button) e.getSource();
-                HBox optionContent = (HBox) clickedButton.getGraphic();
-                Label answerLabel = (Label) optionContent.getChildren().get(1);
+        	button.setOnAction(e -> {
+        	    Button clickedButton = (Button) e.getSource();
+        	    HBox optionContent = (HBox) clickedButton.getGraphic();
+        	    Label answerLabel = (Label) optionContent.getChildren().get(1);
 
-                // Check if the answer is correct
-                if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
-                    clickedButton.setStyle("-fx-background-color: green");
-                } else {
-                    clickedButton.setStyle("-fx-background-color: red");
-                }
+        	    // Check if the answer is correct
+        	    if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
+        	        clickedButton.setStyle("-fx-background-color: green");
+        	        score++;  // Increment score for the correct answer
+        	    } else {
+        	        clickedButton.setStyle("-fx-background-color: red");	
+        	    }
 
-                // Highlight the correct answer
-                for (Button btn : optionButtons) {
-                    HBox content = (HBox) btn.getGraphic();
-                    Label label = (Label) content.getChildren().get(1);
-                    if (label.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
-                        btn.setStyle("-fx-background-color: green");
-                    }
-                }
+        	    // Highlight the correct answer
+        	    for (Button btn : optionButtons) {
+        	        HBox content = (HBox) btn.getGraphic();
+        	        Label label = (Label) content.getChildren().get(1);
+        	        if (label.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
+        	            btn.setStyle("-fx-background-color: green");
+        	        }
+        	    }
 
-                // Disable all buttons
-                for (Button btn : optionButtons) {
-                    btn.setDisable(true);
-                }
+        	    // Disable all buttons
+        	    for (Button btn : optionButtons) {
+        	        btn.setDisable(true);
+        	    }
 
-                resetTimer();
+        	    resetTimer();
 
-                // Start a delay to move to the next question
-                PauseTransition pause = new PauseTransition(Duration.seconds(1));
-                pause.setOnFinished(ev -> {
-                    currentNumber++;
-                    if (currentNumber < questions.size()) {
-                        updateQuestion();
-                        for (Button btn : optionButtons) {
-                            btn.setStyle("");
-                            btn.setDisable(false);
-                        }
-                    } else {
-                        Results resultWindow = new Results(window);
-                        try {
-                            resultWindow.start(new Stage());
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-                pause.play();
-            });
+        	    // Start a delay to move to the next question
+        	    PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        	    pause.setOnFinished(ev -> {
+        	        currentNumber++;
+        	        if (currentNumber < questions.size()) {
+        	            updateQuestion();
+        	            for (Button btn : optionButtons) {
+        	                btn.setStyle("");
+        	                btn.setDisable(false);
+        	            }
+        	        } else {
+        	            Results resultWindow = new Results(window, score, null);  // Pass score to Results
+        	            try {
+        	                resultWindow.start(new Stage());
+        	            } catch (Exception ex) {
+        	                ex.printStackTrace();
+        	            }
+        	        }
+        	    });
+        	    pause.play();
+        	});
         }
 
         HBox optionOneThree = new HBox(125, optionButtons[0], optionButtons[2]);
@@ -321,6 +358,7 @@ public class Questions extends Application {
                 optionButtons[i].setStyle("");
                 optionButtons[i].setDisable(false);
             }
+            resetTimer(); 
         }
     }
 
@@ -342,6 +380,15 @@ public class Questions extends Application {
         pauseTimeline.play();
     }
 
+    private void showResults() {
+        Results resultWindow = new Results(window, score, null);  // Pass score to Results
+        try {
+            resultWindow.start(new Stage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+        
     private void loadQuestionsFromDB(String category, int difficulty) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement stmt = conn.createStatement();
@@ -401,6 +448,6 @@ class Question {
     }
 
     public String getCorrectAnswer() {
-        return correctAnswer; 
+        return correctAnswer;
     }
 }

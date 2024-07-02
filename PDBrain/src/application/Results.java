@@ -1,6 +1,6 @@
 package application;
 
-import javafx.application.Application;
+import javafx.application.Application;  
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,12 +16,28 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+//	public class Results extends Application {
+//	    private Stage window;
+//	    private int finalScore;
+
 public class Results extends Application {
+    private Stage window;
+    private int finalScore;
+    private long[] questionTimes; // Array to store time spent on each question
+
 
     private Stage questionStage; // Reference to the Question stage
 
-    public Results(Stage questionStage) {
-        this.questionStage = questionStage;
+    
+//    public Results(Stage window, int finalScore) {
+//        this.window = window;
+//        this.finalScore = finalScore;
+//    }
+    
+    public Results(Stage window, int finalScore, long[] questionTimes) {
+        this.window = window;
+        this.finalScore = finalScore;
+        this.questionTimes = questionTimes;
     }
 
     public static void main(String[] args) {
@@ -51,14 +67,14 @@ public class Results extends Application {
         Label stageLevel = createLabel("LEVEL 1", "analysis-labels");
         HBox stageContainer = createHBox(stageLevel, Pos.CENTER);
 
-        HBox stars = createStarsHBox(starGood, star2Good, star3Bad);
+        HBox stars = createStarsHBox(finalScore); // Update to use createStarsHBox(finalScore)
 
-        Label congratulatory = createLabel("COMPLETED", "congrats-labels");
+        Label congratulatory = createCongratulatoryMessage(finalScore);
         HBox congratsContainer = createHBox(congratulatory, Pos.CENTER);
 
         HBox timeContent = createTimeContent(25); // Pass the time left value
 
-        HBox scoreContent = createScoreContent(18, 20); // Pass totalScore and overAllScore
+        HBox scoreContent = createScoreContent(finalScore, 5); // Pass totalScore and overAllScore
 
         HBox resultButtons = createResultButtons(primaryStage);
 
@@ -81,7 +97,7 @@ public class Results extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
+    
     private GridPane createGridPane() {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -104,14 +120,32 @@ public class Results extends Application {
         return hbox;
     }
 
-    private HBox createStarsHBox(ImageView starGood, ImageView star2Good, ImageView star3Bad) {
+
+    private HBox createStarsHBox(int finalScore) {
+        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
+        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
+        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
+
+        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
+        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+
         HBox stars = new HBox(10);
         stars.setAlignment(Pos.CENTER);
-        stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Bad, 10));
+
+        if (finalScore == 5) {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Good, 10));
+        } else if (finalScore >= 3) {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Bad, 10));
+        } else {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Bad, rotateImage(star3Bad, 10));
+        }
+
         stars.setPadding(new Insets(30, 0, 10, 0)); // top, right, bottom, left
         return stars;
     }
 
+    
     private HBox createTimeContent(int timeLeft) {
         ImageView timerLogo = new ImageView(new Image("/Images/Timer.png"));
         Label answerLabel = new Label(timeLeft + "S");
@@ -160,8 +194,7 @@ public class Results extends Application {
             questionStage.close();
         });
         Button advanceButton = createButton(advance, "Result-buttons", e -> {
-            primaryStage.close();
-            questionStage.close(); 
+            advanceToNextStage(primaryStage);
         });
 
         HBox resultButtons = new HBox(-20);
@@ -169,6 +202,27 @@ public class Results extends Application {
         resultButtons.getChildren().addAll(homeButton, retakeButton, advanceButton);
         return resultButtons;
     }
+    
+    private VBox createTimeContent(long[] questionTimes) {
+        VBox timeContent = new VBox(10);
+        timeContent.setAlignment(Pos.CENTER_LEFT);
+        timeContent.getStyleClass().add("time-content");
+
+        for (int i = 0; i < questionTimes.length; i++) {
+            Label timeLabel = new Label("Question " + (i + 1) + ": " + formatTime(questionTimes[i]));
+            timeLabel.getStyleClass().add("timer-labels");
+            timeContent.getChildren().add(timeLabel);
+        }
+
+        return timeContent;
+    }
+
+    private String formatTime(long milliseconds) {
+        // Convert milliseconds to seconds or minutes as per your requirement
+        long seconds = milliseconds / 1000;
+        return seconds + " seconds";
+    }
+
 
     private Button createButton(ImageView graphic, String styleClass, javafx.event.EventHandler<javafx.event.ActionEvent> actionEventEventHandler) {
         Button button = new Button();
@@ -182,5 +236,28 @@ public class Results extends Application {
         Rotate rotate = new Rotate(angle, 0, 0); 
         imageView.getTransforms().add(rotate);
         return imageView;
+    }
+    private void advanceToNextStage(Stage primaryStage) {
+        try {
+            Categories categories = new Categories();
+            Stage stage = new Stage();
+            categories.start(stage);
+
+            primaryStage.close();
+            questionStage.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    private Label createCongratulatoryMessage(int score) {
+        String message;
+        if (score == 5) {
+            message = "Excellent!";
+        } else if (score >= 3) {
+            message = "Great job!";
+        } else {
+            message = "Try Again";
+        }
+        return createLabel(message, "congrats-labels");
     }
 }
