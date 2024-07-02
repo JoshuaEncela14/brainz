@@ -73,6 +73,7 @@ public class Login extends Application {
         Button backButton = new Button();
         backButton.getStyleClass().add("back-Button");
         backButton.setOnAction(e -> {
+        	resetLoggedInStatus(url, username, password);
             try {
                 window.close();
                 Stage HomeStage = new Stage();
@@ -243,23 +244,36 @@ public class Login extends Application {
         }
 
         if (valid) {
+            Connection connection = null;
+            PreparedStatement statementReset = null;
+            PreparedStatement statementSelect = null;
+            PreparedStatement statementUpdate = null;
+            ResultSet resultSet = null;
             try {
-                Connection connection = DriverManager.getConnection(url, username, password);
+                connection = DriverManager.getConnection(url, username, password);
+
+                // Reset the loggedIn status for all users
+                String sqlReset = "UPDATE logs SET loggedIn = 0";
+                statementReset = connection.prepareStatement(sqlReset);
+                int rowsUpdated = statementReset.executeUpdate();
+                System.out.println("Rows updated to loggedIn = 0: " + rowsUpdated);
+
+                // Proceed with the login logic
                 String sqlSelect = "SELECT * FROM logs WHERE name = ?";
-                PreparedStatement statementSelect = connection.prepareStatement(sqlSelect);
+                statementSelect = connection.prepareStatement(sqlSelect);
                 statementSelect.setString(1, name);
 
-                ResultSet resultSet = statementSelect.executeQuery();
+                resultSet = statementSelect.executeQuery();
 
                 if (resultSet.next()) {
+                	
                     String storedHash = resultSet.getString("password");
 
                     BCrypt.Result result = BCrypt.verifyer().verify(passwordValue.toCharArray(), storedHash);
                     if (result.verified) {
-
                         int userId = resultSet.getInt("id");
                         String sqlUpdate = "UPDATE logs SET loggedIn = 1 WHERE id = ?";
-                        PreparedStatement statementUpdate = connection.prepareStatement(sqlUpdate);
+                        statementUpdate = connection.prepareStatement(sqlUpdate);
                         statementUpdate.setInt(1, userId);
                         statementUpdate.executeUpdate();
 
@@ -267,13 +281,12 @@ public class Login extends Application {
                         System.out.println("Login successful!");
 
                         try {
-                        	window.close();
-                           Stage catStage = new Stage();
-                           new Categories().start(catStage);
-                       } catch (Exception ex) {
-                           ex.printStackTrace();
-                       }
-                        
+                            window.close();
+                            Stage catStage = new Stage();
+                            new Categories().start(catStage);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     } else {
                         // Handle incorrect password
                         passBox.setStyle("-fx-border-color: red;");
@@ -292,17 +305,34 @@ public class Login extends Application {
                     GridPane.setHalignment(nameLabel, HPos.CENTER);
                     nameLabel.setStyle("-fx-max-width: 500");
                     enterUsername.setImage(new Image("./Images/Username_not_found.png"));
-                    
-                    
                     shake(nameInput);
                 }
-
-                resultSet.close();
-                statementSelect.close();
-                connection.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } finally {
+                try {
+                    if (resultSet != null) resultSet.close();
+                    if (statementSelect != null) statementSelect.close();
+                    if (statementUpdate != null) statementUpdate.close();
+                    if (statementReset != null) statementReset.close();
+                    if (connection != null) connection.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
+        }
+    }
+
+
+    private void resetLoggedInStatus(String url, String username, String password) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            String sqlReset = "UPDATE logs SET loggedIn = 0";
+            try (PreparedStatement statement = connection.prepareStatement(sqlReset)) {
+                int rowsUpdated = statement.executeUpdate();
+                System.out.println("Rows updated to loggedIn = 0: " + rowsUpdated);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
