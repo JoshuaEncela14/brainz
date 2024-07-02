@@ -1,6 +1,6 @@
 package application;
- 
-import javafx.animation.KeyFrame;
+
+import javafx.animation.KeyFrame; 
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -11,6 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -30,11 +32,14 @@ public class Questions extends Application {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
+    private String[] imageFiles = {"A.png", "B.png", "C.png", "D.png"};
 
     private Stage window;
     private int currentNumber = 0;
     private Timeline timeline;
 
+    private int score = 0;
+    
     private List<Question> questions = new ArrayList<>();
     private Label questionLabel;
     private Label currentQuestionLabel;
@@ -42,6 +47,9 @@ public class Questions extends Application {
 
     private String selectedCategory;
     private int selectedDifficulty;
+    
+    private long startTime; // Time when the quiz starts
+    private long[] questionTimes; // Array to store time spent on each question
 
     public Questions(String selectedCategory, int selectedDifficulty) {
         this.selectedCategory = selectedCategory;
@@ -68,9 +76,12 @@ public class Questions extends Application {
         grid.getChildren().addAll(header, timer, createQuestionContainer(), questionOptions);
 
         Scene scene = new Scene(grid, 960, 520);
-        scene.getStylesheets().add("design.css");
+        scene.getStylesheets().add("/CSS/design.css");
         window.setScene(scene);
         window.show();
+
+        // Show first question
+        updateQuestion();
     }
 
     private GridPane createGridPane() {
@@ -103,7 +114,7 @@ public class Questions extends Application {
         HBox header = new HBox(10, lifelines, questionTracking);
         header.getStyleClass().add("hbox-questions-header");
         header.setAlignment(Pos.CENTER_LEFT);
-       
+
         GridPane.setConstraints(header, 0, 0, GridPane.REMAINING, 1);
 
         return header;
@@ -118,28 +129,70 @@ public class Questions extends Application {
         lifelineButton.setOnAction(event -> {
             if (text.equals("Pause")) {
                 pauseTimer();
+                lifelineButton.setDisable(true); 
             } else if (text.equals("50:50")) {
-                // 50:50 lifeline logic
+                executeFiftyFiftyLifeline();
+                lifelineButton.setDisable(true); // Disable lifeline after use
             }
         });
 
         return lifelineButton;
     }
 
+    private void executeFiftyFiftyLifeline() {
+        String correctAnswer = questions.get(currentNumber).getCorrectAnswer();
+        int correctIndex = -1;
+
+        // Find the index of the correct answer
+        for (int i = 0; i < optionButtons.length; i++) {
+            HBox optionContent = (HBox) optionButtons[i].getGraphic();
+            Label answerLabel = (Label) optionContent.getChildren().get(1);
+            if (answerLabel.getText().equals(correctAnswer)) {
+                correctIndex = i;
+                break;
+            }
+        }
+
+        // Disable two incorrect options
+        List<Integer> disableIndices = new ArrayList<>();
+        for (int i = 0; i < optionButtons.length; i++) {
+            if (i != correctIndex) {
+                disableIndices.add(i);
+            }
+        }
+
+        // Randomly disable two incorrect options
+        for (int j = 0; j < 2; j++) {
+            int randomIndex = (int) (Math.random() * disableIndices.size());
+            int indexToDisable = disableIndices.get(randomIndex);
+            optionButtons[indexToDisable].setDisable(true);
+            disableIndices.remove(randomIndex); // Ensure unique disables
+        }
+    }
+
     private HBox createTimer() {
         HBox timer = new HBox();
         timer.getStyleClass().add("hbox-questions-timer");
-        GridPane.setConstraints(timer, 0, 1, GridPane.REMAINING, 1);
 
         Rectangle timerBar = new Rectangle(960, 5, Color.web("#960A0A"));
         timer.getChildren().add(timerBar);
 
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(timerBar.widthProperty(), 960)),
-                new KeyFrame(Duration.seconds(30), new KeyValue(timerBar.widthProperty(), 0))
+                new KeyFrame(Duration.seconds(25), e -> {
+                    // When timer ends, move to next question
+                    currentNumber++;
+                    if (currentNumber < questions.size()) {
+                        updateQuestion();
+                    } else {
+                        showResults();
+                    }
+                }, new KeyValue(timerBar.widthProperty(), 0))
         );
         timeline.setCycleCount(1);
         timeline.play();
+
+        GridPane.setConstraints(timer, 0, 1, GridPane.REMAINING, 1);
 
         return timer;
     }
@@ -147,111 +200,127 @@ public class Questions extends Application {
     private void pauseTimer() {
         timeline.pause();
 
+        timeline.setOnFinished(event -> {
+            currentNumber++;
+            if (currentNumber < questions.size()) {
+                updateQuestion();
+            } else {
+                Results resultWindow = new Results(window, score, null);  // Pass score to Results
+                try {
+                    resultWindow.start(new Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
         Timeline resumeTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(10), e -> timeline.play())
         );
         resumeTimeline.play();
     }
-
+    
     private VBox createQuestionOptions() {
         optionButtons = new Button[4];
         for (int i = 0; i < optionButtons.length; i++) {
-            optionButtons[i] = createOptionButton();
+            optionButtons[i] = createOptionButton(imageFiles[i]);
         }
 
         for (Button button : optionButtons) {
-            button.setOnAction(e -> {
-                Button clickedButton = (Button) e.getSource();
-                HBox optionContent = (HBox) clickedButton.getGraphic();
-                Label answerLabel = (Label) optionContent.getChildren().get(1);
+        	button.setOnAction(e -> {
+        	    Button clickedButton = (Button) e.getSource();
+        	    HBox optionContent = (HBox) clickedButton.getGraphic();
+        	    Label answerLabel = (Label) optionContent.getChildren().get(1);
 
-                // Check if the answer is correct
-                if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
-                    clickedButton.setStyle("-fx-background-color: green");
-                } else {
-                    clickedButton.setStyle("-fx-background-color: red");
-                }
+        	    // Check if the answer is correct
+        	    if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
+        	        clickedButton.setStyle("-fx-background-color: green");
+        	        score++;  // Increment score for the correct answer
+        	    } else {
+        	        clickedButton.setStyle("-fx-background-color: red");	
+        	    }
 
-                // Highlight the correct answer
-                for (Button btn : optionButtons) {
-                    HBox content = (HBox) btn.getGraphic();
-                    Label label = (Label) content.getChildren().get(1);
-                    if (label.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
-                        btn.setStyle("-fx-background-color: green");
-                    }
-                }
+        	    // Highlight the correct answer
+        	    for (Button btn : optionButtons) {
+        	        HBox content = (HBox) btn.getGraphic();
+        	        Label label = (Label) content.getChildren().get(1);
+        	        if (label.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
+        	            btn.setStyle("-fx-background-color: green");
+        	        }
+        	    }
 
-                // Disable all buttons
-                for (Button btn : optionButtons) {
-                    btn.setDisable(true);
-                }
+        	    // Disable all buttons
+        	    for (Button btn : optionButtons) {
+        	        btn.setDisable(true);
+        	    }
 
-                resetTimer();
+        	    resetTimer();
 
-                // Start a delay to move to the next question
-                PauseTransition pause = new PauseTransition(Duration.seconds(1));
-                pause.setOnFinished(ev -> {
-                    currentNumber++;
-                    if (currentNumber < questions.size()) {
-                        updateQuestion();
-                        // Reset button styles and enable them for the next question
-                        for (Button btn : optionButtons) {
-                            btn.setStyle(""); // Reset style
-                            btn.setDisable(false);
-                        }
-                    } else {
-                        Results resultWindow = new Results(window);
-                        try {
-                            resultWindow.start(new Stage());
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-                pause.play();
-            });
+        	    // Start a delay to move to the next question
+        	    PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        	    pause.setOnFinished(ev -> {
+        	        currentNumber++;
+        	        if (currentNumber < questions.size()) {
+        	            updateQuestion();
+        	            for (Button btn : optionButtons) {
+        	                btn.setStyle("");
+        	                btn.setDisable(false);
+        	            }
+        	        } else {
+        	            Results resultWindow = new Results(window, score, null);  // Pass score to Results
+        	            try {
+        	                resultWindow.start(new Stage());
+        	            } catch (Exception ex) {
+        	                ex.printStackTrace();
+        	            }
+        	        }
+        	    });
+        	    pause.play();
+        	});
         }
 
         HBox optionOneThree = new HBox(125, optionButtons[0], optionButtons[2]);
         optionOneThree.getStyleClass().add("hbox-question-optionAC");
         optionOneThree.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(optionOneThree, 0, 3, GridPane.REMAINING, 1);
 
         HBox optionTwoFour = new HBox(125, optionButtons[1], optionButtons[3]);
         optionTwoFour.getStyleClass().add("hbox-question-optionAC");
         optionTwoFour.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(optionTwoFour, 0, 4, GridPane.REMAINING, 1);
 
         VBox questionOptions = new VBox(25, optionOneThree, optionTwoFour);
         questionOptions.getStyleClass().add("hbox-question-optionAC");
         questionOptions.setAlignment(Pos.CENTER);
+
         GridPane.setConstraints(questionOptions, 0, 3, GridPane.REMAINING, 1);
 
         return questionOptions;
     }
 
-    private Button createOptionButton() {
+    private Button createOptionButton(String imageFileName) {
         Button optionButton = new Button();
         optionButton.getStyleClass().add("label-question-option");
 
         HBox optionContent = new HBox(10);
         optionContent.setAlignment(Pos.CENTER_LEFT);
 
+        Image image = new Image(getClass().getResourceAsStream("/images/" + imageFileName));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(30);
+        imageView.setFitHeight(30);
+
         Label answerLabel = new Label();
         answerLabel.getStyleClass().add("label-question-answer");
 
-        Pane imagePane = new Pane();
-        imagePane.setPrefSize(30, 50);
-        optionContent.getChildren().addAll(imagePane, answerLabel);
+        optionContent.getChildren().addAll(imageView, answerLabel);
+        optionContent.setPadding(new Insets(0, 10, 0, 10));
 
         optionButton.setGraphic(optionContent);
-        optionContent.setPadding(new Insets(0, 10, 0, 10));
 
         return optionButton;
     }
 
     private HBox createQuestionContainer() {
-        questionLabel = new Label(questions.get(currentNumber).getQuestionText());
+        questionLabel = new Label();
         questionLabel.getStyleClass().add("label-question-label");
         questionLabel.setLineSpacing(10);
 
@@ -259,7 +328,7 @@ public class Questions extends Application {
         questionContainer.setAlignment(Pos.CENTER);
         questionContainer.getStyleClass().add("hbox-questions-container");
 
-        GridPane.setConstraints(questionContainer, 0, 2);
+        GridPane.setConstraints(questionContainer, 0, 2, GridPane.REMAINING, 1);
         GridPane.setMargin(questionContainer, new Insets(30, 0, 30, 0));
         GridPane.setHalignment(questionContainer, HPos.CENTER);
 
@@ -267,15 +336,20 @@ public class Questions extends Application {
     }
 
     private void updateQuestion() {
-        Question currentQuestion = questions.get(currentNumber);
-        questionLabel.setText(currentQuestion.getQuestionText());
-        currentQuestionLabel.setText((currentNumber + 1) + " / " + questions.size());
+        if (currentNumber < questions.size()) {
+            Question currentQuestion = questions.get(currentNumber);
+            questionLabel.setText(currentQuestion.getQuestionText());
+            currentQuestionLabel.setText((currentNumber + 1) + " / " + questions.size());
 
-        List<String> choices = currentQuestion.getChoices();
-        for (int i = 0; i < optionButtons.length; i++) {
-            ((Label)((HBox)optionButtons[i].getGraphic()).getChildren().get(1)).setText(choices.get(i));
-            optionButtons[i].setStyle(""); // Reset style
-            optionButtons[i].setDisable(false); // Enable button
+            List<String> choices = currentQuestion.getChoices();
+            for (int i = 0; i < optionButtons.length; i++) {
+                HBox optionContent = (HBox) optionButtons[i].getGraphic();
+                Label answerLabel = (Label) optionContent.getChildren().get(1);
+                answerLabel.setText(choices.get(i));
+                optionButtons[i].setStyle("");
+                optionButtons[i].setDisable(false);
+            }
+            resetTimer(); 
         }
     }
 
@@ -292,12 +366,20 @@ public class Questions extends Application {
         }
 
         Timeline pauseTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            // Restart timeline animation after pause
             timeline.play();
         }));
         pauseTimeline.play();
     }
 
+    private void showResults() {
+        Results resultWindow = new Results(window, score, null);  // Pass score to Results
+        try {
+            resultWindow.start(new Stage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+        
     private void loadQuestionsFromDB(String category, int difficulty) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              Statement stmt = conn.createStatement();
@@ -359,4 +441,5 @@ class Question {
     public String getCorrectAnswer() {
         return correctAnswer;
     }
+>>>>>>> branch 'main' of https://github.com/JoshuaEncela14/brainz.git
 }
