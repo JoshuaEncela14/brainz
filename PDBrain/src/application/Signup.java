@@ -63,6 +63,7 @@ public class Signup extends Application {
 
         // GridPane
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("root-login-gridpane"); 
         grid.setAlignment(Pos.TOP_CENTER);
 
         grid.setPadding(new Insets(20, 10, 10, 20));
@@ -88,6 +89,7 @@ public class Signup extends Application {
         ImageView logo = new ImageView(new Image("/Images/logooo.png"));
         GridPane.setHalignment(logo, HPos.CENTER);
         grid.addRow(6, logo);
+        GridPane.setMargin(logo, new Insets(-30, 0, 0, 0));
 
         // Name Input
         HBox nameLabel = new HBox();
@@ -96,6 +98,7 @@ public class Signup extends Application {
         nameLabel.setStyle("-fx-max-width: 500");
         nameLabel.setAlignment(Pos.CENTER_LEFT); 
         GridPane.setHalignment(nameLabel, HPos.CENTER);
+        GridPane.setMargin(nameLabel, new Insets(-30, 0, 0, 0));
 
         GridPane.setMargin(nameLabel, new Insets(0, 0, 0, 0));
 
@@ -104,6 +107,7 @@ public class Signup extends Application {
         GridPane.setHalignment(nameInput, HPos.CENTER);
         nameInput.getStyleClass().add("username-field-container");
         GridPane.setConstraints(nameInput, 0, 9);
+//        GridPane.setMargin(nameInput, new Insets(-30, 0, 0, 0));
 
         // Password Input
         HBox passLabel = new HBox();
@@ -217,7 +221,7 @@ public class Signup extends Application {
         signUpButton.getStyleClass().add("login-button");
         HBox hboxsignup = new HBox(signUpButton);
         hboxsignup.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(hboxsignup, 0, 17);
+        GridPane.setConstraints(hboxsignup, 0, 20);
 
         // Sign Up Action
         signUpButton.setOnAction(e -> {
@@ -254,10 +258,11 @@ public class Signup extends Application {
         Hyperlink logInLink = new Hyperlink("Log-in");
         logInLink.getStyleClass().add("hyperlink-sign-up");
         logLabel.getStyleClass().add("label-sign-up");
+        
 
         HBox hboxlogin = new HBox(logLabel, logInLink);
         hboxlogin.setAlignment(Pos.CENTER);
-        GridPane.setConstraints(hboxlogin, 0, 18);
+        GridPane.setConstraints(hboxlogin, 0, 21);
 
         logInLink.setOnAction(e -> {
             try {

@@ -12,6 +12,13 @@
     -fx-background-radius: 10px;
 }
 
+.root-login-gridpane {
+    -fx-background-image: url('/Images/Categories_background.png'); 
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 10px;
+}
+
 
 
 
@@ -176,7 +183,7 @@
 
 
 .label-sign-up {
-	-fx-text-fill: #4D4D4D;
+	-fx-text-fill: #FFFFFF;
 	-fx-font-weight: normal;
 	-fx-font-size: 0.90em;
 	-fx-padding: 0;
@@ -193,8 +200,8 @@
 }
 
 .hyperlink-sign-up {
-	-fx-text-fill: #8D2525;
-	-fx-font-weight: bold;
+	-fx-text-fill: #4ED344;
+	-fx-font-weight: 800;
 	-fx-underline: true;
 	-fx-font-size: 0.90em;
 	-fx-padding: 0;
