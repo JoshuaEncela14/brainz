@@ -4,13 +4,16 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Leaderboard extends Application {
 
@@ -24,8 +27,11 @@ public class Leaderboard extends Application {
     public void start(Stage primaryStage) {
         window = primaryStage;
         window.setTitle("BRAINZZZ");
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        
+        
 
-        String leadText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum luctus placerat. Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet";
+        String leadText = "Join the brainz leaderboard! Score high, climb the ranks, and showcase your knowledge in this educational game. ";
         String[] ranking = new String[10];
         String[] names = {"Enzon", "Comia", "Aniciete", "Encela"};
         String[] scores = {"950", "870", "869", "714"};
@@ -33,11 +39,26 @@ public class Leaderboard extends Application {
 
         for (int i = 0; i < ranking.length; i++) {
             ranking[i] = "# " + (i + 1);
-        }
+        }	
+        
 
+        Button exitButton = createButton("leaderboard-quit-buttons", this::handleExitButton);
+        GridPane.setConstraints(exitButton, 0, 1);
+        VBox.setMargin(exitButton, new Insets(-30, 0, 0, 680));
+        
         GridPane grid = createGridPane();
-        Label leaderboard = createLabel("LEADERBOARD", "label-leaderboard", 0, 1);
+        Label leaderboard = createLabel("", "label-leaderboard", 0, 1);
+        VBox.setMargin(leaderboard, new Insets(-60, 0, 0, 00));
+        
+        
         Label leader = createLabel(leadText, "label-under-leaderboard", 0, 2);
+        grid.getStyleClass().add("result-parent-grid");
+        leader.setWrapText(true);  
+        leader.setMaxWidth(500);
+        leader.setMinHeight(30);
+        leader.setMaxWidth(Double.MAX_VALUE);  
+        leader.setAlignment(Pos.CENTER); 
+//        VBox.setMargin(leader, new Insets(0, 0, 100, 0));
 
         HBox rank1Container = createRank1Container(ranking[0], names[0], medals[0], scores[0], "rank1-label-leaderboard",
                 "rank1ContainerLeft-leaderboard", "rank1ContainerRight-leaderboard", 0, 3);
@@ -51,14 +72,18 @@ public class Leaderboard extends Application {
         HBox rank4Container = createNoRankContainer(ranking[3], names[3], scores[3], "ranking-label-leaderboard",
                 "rankingContainerLeft-leaderboard", "rankingContainerRight-leaderboard", 0, 6);
         
+       
         
-
+        VBox rankingContainer = new VBox(20);
+        rankingContainer.getChildren().addAll(rank1Container, rank2Container, rank3Container, rank4Container);
+        VBox.setMargin(rankingContainer, new Insets(10,0,0,0));
         
         
-        VBox leaderboardContainer = new VBox(20);
-        leaderboardContainer.getChildren().addAll(leaderboard, leader, rank1Container, rank2Container, rank3Container, rank4Container);
+        VBox leaderboardContainer = new VBox(10);
+        leaderboardContainer.getChildren().addAll(exitButton,leaderboard, leader, rankingContainer );
         leaderboardContainer.setAlignment(Pos.TOP_CENTER);
         leaderboardContainer.getStyleClass().add("leaderboard-container");
+        
 
         grid.getChildren().addAll(leaderboardContainer);
         GridPane.setConstraints(leaderboardContainer, 0, 0);
@@ -69,6 +94,7 @@ public class Leaderboard extends Application {
 
         Scene scene = new Scene(grid, 960, 520);
         scene.getStylesheets().add("/CSS/design.css");
+        scene.setFill(Color.TRANSPARENT);
         window.setScene(scene);
         window.show();
     }
@@ -86,9 +112,10 @@ public class Leaderboard extends Application {
         Label label = new Label(text);
         label.getStyleClass().add(styleClass);
         GridPane.setConstraints(label, columnIndex, rowIndex);
+        GridPane.setHalignment(label, javafx.geometry.HPos.CENTER); // Center the label horizontally
         return label;
     }
-
+    
     private HBox createRank1Container(String rankText, String name, String medalUrl, String score,
                                      String rankLabelStyleClass, String leftContainerStyleClass,
                                      String rightContainerStyleClass, int columnIndex, int rowIndex) {
@@ -171,8 +198,6 @@ public class Leaderboard extends Application {
 			
 			Label nameLabel = new Label(name);
 			nameLabel.getStyleClass().add("ranking-label-right-leaderboard");
-			
-
 
 			
 			Label scoreLabel = new Label(" " + score);
@@ -189,4 +214,16 @@ public class Leaderboard extends Application {
 			
 			return rankContainer;
 		}
+    
+    private Button createButton(String styleClass, Runnable action) {
+        Button button = new Button();
+        button.getStyleClass().add(styleClass);
+        button.setOnAction(e -> action.run());
+        return button;
+    }
+    
+    private void handleExitButton() {
+
+        window.close();
+    }
 }
