@@ -21,6 +21,7 @@ import javafx.util.Duration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,6 +40,7 @@ public class Questions extends Application {
     private Stage window;
     private int currentNumber = 0;
     private Timeline timeline;
+    int newScore = 0;
 
     private List<Question> questions = new ArrayList<>();
     private Label questionLabel;
@@ -211,7 +213,8 @@ public class Questions extends Application {
                 if (answerLabel.getText().equals(questions.get(currentNumber).getCorrectAnswer())) {
                     clickedButton.setStyle("-fx-background-color: green");
                     // Update score when answer is correct
-                    updateScore(category, selectedCategory);
+                    newScore ++;
+                    updateScore(selectedCategory, newScore);
                 } else {
                     clickedButton.setStyle("-fx-background-color: red");
                 }
@@ -380,46 +383,26 @@ public class Questions extends Application {
             e.printStackTrace();
         }
     }
-
-//    private void updateEnglishScore(String username) {
-//        Connection conn = null;
-//        Statement stmt = null;
-//
-//        try {
-//            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-//            stmt = conn.createStatement();
-//
-//            String sql = "UPDATE score SET en_score = en_score + 1 WHERE category = '" + username + "'";
-//            stmt.executeUpdate(sql);
-//
-//            System.out.println("English score updated successfully for user: " + username);
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (stmt != null) stmt.close();
-//                if (conn != null) conn.close();
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
     
-    private void updateScore(String username, String category) {
+    
+    private void updateScore(String category, int newScore) {
         Connection conn = null;
-        Statement stmt = null;
-        String columnName = "";
+        PreparedStatement stmt = null;
+        String scoreColumn = "";
+        String stageColumn = "";
 
         switch (category) {
             case "english":
-                columnName = "en_score";
+                scoreColumn = "en_stage" + selectedDifficulty + "_score";
+                stageColumn = "en_stage";
                 break;
             case "math":
-                columnName = "math_score";
+                scoreColumn = "math_stage" + selectedDifficulty + "_score";
+                stageColumn = "math_stage";
                 break;
             case "science":
-                columnName = "sci_score";
+                scoreColumn = "sci_stage" + selectedDifficulty + "_score";
+                stageColumn = "sci_stage";
                 break;
             default:
                 // Handle unexpected category (if needed)
@@ -428,14 +411,13 @@ public class Questions extends Application {
 
         try {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            stmt = conn.createStatement();
 
-            // Query to retrieve userId from logs where loggedIn is 1
+            // Retrieve userId from logs where loggedIn is 1
             String userIdQuery = "SELECT id FROM logs WHERE loggedIn = 1";
-            ResultSet rs = stmt.executeQuery(userIdQuery);
-            
+            stmt = conn.prepareStatement(userIdQuery);
+            ResultSet rs = stmt.executeQuery();
+
             int userId = -1; // Default value for userId
-            
             if (rs.next()) {
                 userId = rs.getInt("id");
             } else {
@@ -443,11 +425,82 @@ public class Questions extends Application {
                 return;
             }
 
-            // Update score for the retrieved userId
-            String sql = "UPDATE score SET " + columnName + " = " + columnName + " + 1 WHERE UserId = " + userId;
-            stmt.executeUpdate(sql);
+            // Get current score for the user
+            String currentScoreQuery = "SELECT " + scoreColumn + " FROM score WHERE UserId = ?";
+            stmt = conn.prepareStatement(currentScoreQuery);
+            stmt.setInt(1, userId);
+            rs = stmt.executeQuery();
 
-            System.out.println(category + " score updated successfully for user with userId: " + userId);
+            if (rs.next()) {
+                int currentScore = rs.getInt(scoreColumn);
+
+                // Update score only if the new score is higher than the current score
+                if (newScore > currentScore) {
+                    String updateScoreQuery = "UPDATE score SET " + scoreColumn + " = ? WHERE UserId = ?";
+                    stmt = conn.prepareStatement(updateScoreQuery);
+                    stmt.setInt(1, newScore);
+                    stmt.setInt(2, userId);
+                    int rowsUpdated = stmt.executeUpdate();
+                    System.out.println(category + " stage " + selectedDifficulty + " score updated to " + newScore + " for user with userId: " + userId);
+                } else {
+                    System.out.println(category + " stage " + selectedDifficulty + " score not updated. Current score (" + currentScore + ") is not lower than new score (" + newScore + ")");
+                }
+
+                // Handle cumulative score for stage 2
+                if (selectedDifficulty == 2) {
+                    String stage1ScoreColumn = scoreColumn.replace("_stage2_", "_stage1_");
+                    String stage1ScoreQuery = "SELECT " + stage1ScoreColumn + " FROM score WHERE UserId = ?";
+                    stmt = conn.prepareStatement(stage1ScoreQuery);
+                    stmt.setInt(1, userId);
+                    rs = stmt.executeQuery();
+
+                    if (rs.next()) {
+                        int stage1Score = rs.getInt(stage1ScoreColumn);
+
+                        // Calculate cumulative score
+                        int cumulativeScore = stage1Score + newScore;
+
+                        // Update stage 2 score with cumulative score
+                        String updateStage2ScoreQuery = "UPDATE score SET " + scoreColumn + " = ? WHERE UserId = ?";
+                        stmt = conn.prepareStatement(updateStage2ScoreQuery);
+                        stmt.setInt(1, cumulativeScore);
+                        stmt.setInt(2, userId);
+                        int rowsUpdated = stmt.executeUpdate();
+                        System.out.println(category + " stage 2 cumulative score updated to " + cumulativeScore + " for user with userId: " + userId);
+                    } else {
+                        System.out.println("No stage 1 score found for user with userId: " + userId);
+                    }
+                }
+
+                // Handle cumulative score for stage 3
+                if (selectedDifficulty == 3) {
+                    String stage2ScoreColumn = scoreColumn.replace("_stage3_", "_stage2_");
+                    String stage2ScoreQuery = "SELECT " + stage2ScoreColumn + " FROM score WHERE UserId = ?";
+                    stmt = conn.prepareStatement(stage2ScoreQuery);
+                    stmt.setInt(1, userId);
+                    rs = stmt.executeQuery();
+
+                    if (rs.next()) {
+                        int stage2Score = rs.getInt(stage2ScoreColumn);
+
+                        // Calculate cumulative score
+                        int cumulativeScore = stage2Score + newScore;
+
+                        // Update stage 3 score with cumulative score
+                        String updateStage3ScoreQuery = "UPDATE score SET " + scoreColumn + " = ? WHERE UserId = ?";
+                        stmt = conn.prepareStatement(updateStage3ScoreQuery);
+                        stmt.setInt(1, cumulativeScore);
+                        stmt.setInt(2, userId);
+                        int rowsUpdated = stmt.executeUpdate();
+                        System.out.println(category + " stage 3 cumulative score updated to " + cumulativeScore + " for user with userId: " + userId);
+                    } else {
+                        System.out.println("No stage 2 score found for user with userId: " + userId);
+                    }
+                }
+
+            } else {
+                System.out.println("No score found for user with userId: " + userId);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -460,8 +513,6 @@ public class Questions extends Application {
             }
         }
     }
-
-
 
 
 }
@@ -495,4 +546,3 @@ class Question {
         return correctAnswer;
     }
 }
-//hello

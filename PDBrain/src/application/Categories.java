@@ -1,5 +1,3 @@
-// hello
-
 package application;
 
 import javafx.animation.ScaleTransition;
@@ -29,8 +27,14 @@ public class Categories extends Application {
     private Stage window;
     private String category;
     private int difficultyId;
-    private int userId = 1; // Set this to the logged-in user's ID
+    private int userId; // Updated to fetch from logs table
     private Connection conn;
+    
+    Button stageOne;
+    Button stageTwo;
+    Button stageThree;
+    Button stageFour;
+    Button stageFive;
 
     public static void main(String[] args) {
         launch(args);
@@ -48,6 +52,20 @@ public class Categories extends Application {
     private void connectToDatabase() {
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/brainzmcq_mysql", "root", "");
+            fetchUserIdFromLogs(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fetchUserIdFromLogs() {
+        try {
+            String sql = "SELECT id FROM logs WHERE LoggedIn = 1";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("id");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -80,55 +98,28 @@ public class Categories extends Application {
                     btn.getStyleClass().setAll("button");
                 }
                 categoryButton.getStyleClass().setAll("button-active");
+                // Check and enable stages based on category and scores
+                checkStageUnlocks();
             });
             hboxCategory.getChildren().add(categoryButton);
         }
-        
+
         hboxCategory.getStyleClass().add("hbox-category");
 
         GridPane.setConstraints(hboxCategory, 0, 0);
         GridPane.setMargin(hboxCategory, new Insets(0, 0, 0, 40));
 
-     // Stage buttons
-        Button stageOne = new Button();
-        stageOne.setPrefWidth(140);
-        stageOne.setPrefHeight(75);
-        stageOne.getStyleClass().add("stage_one");
-        stageOne.setOnAction(e -> openQuestionsStage("Stage 1"));
-        addHoverEffect(stageOne);
-
-        Button stageTwo = new Button();
-        stageTwo.setPrefWidth(140);
-        stageTwo.setPrefHeight(75);
-        stageTwo.getStyleClass().add("stage_two");
-        stageTwo.setOnAction(e -> openQuestionsStage("Stage 2"));
-        addHoverEffect(stageTwo);
-
-        Button stageThree = new Button();
-        stageThree.setPrefWidth(140);
-        stageThree.setPrefHeight(75);
-        stageThree.getStyleClass().add("stage_three");
-        stageThree.setOnAction(e -> openQuestionsStage("Stage 3"));
-        addHoverEffect(stageThree);
-
-        Button stageFour = new Button();
-        stageFour.setPrefWidth(140);
-        stageFour.setPrefHeight(75);
-        stageFour.getStyleClass().add("stage_four");
-        stageFour.setOnAction(e -> openQuestionsStage("Stage 4"));
-        addHoverEffect(stageFour);
-
-        Button stageFive = new Button();
-        stageFive.setPrefWidth(140);
-        stageFive.setPrefHeight(75);
-        stageFive.getStyleClass().add("stage_five");
-        stageFive.setOnAction(e -> openQuestionsStage("Stage 5"));
-        addHoverEffect(stageFive);
+        // Stage buttons
+        stageOne = createStageButton("Stage 1");
+        stageTwo = createStageButton("Stage 2");
+        stageThree = createStageButton("Stage 3");
+        stageFour = createStageButton("Stage 4");
+        stageFive = createStageButton("Stage 5");
 
         // HBox for the first row of stage buttons
         HBox hboxRow1 = new HBox(10);
         hboxRow1.setAlignment(Pos.CENTER);
-        hboxRow1.getChildren().addAll(stageOne, stageTwo, stageFour, stageThree, stageFive);
+        hboxRow1.getChildren().addAll(stageOne, stageTwo, stageThree, stageFour, stageFive);
         VBox.setMargin(hboxRow1, new Insets(40, 0, 0, 0));
 
         // VBox to combine both HBoxes
@@ -143,9 +134,6 @@ public class Categories extends Application {
 
         grid.getChildren().addAll(hboxCategory, vboxStages);
 
-        // Check scores and disable stages accordingly
-        checkStageUnlocks(stageOne, stageTwo, stageThree, stageFour, stageFive);
-
         Scene scene = new Scene(grid, 960, 520);
         scene.getStylesheets().add("/CSS/categories.css");
         window.setScene(scene);
@@ -153,12 +141,31 @@ public class Categories extends Application {
     }
 
     private Button createStageButton(String stageName) {
-        Button stageButton = new Button(stageName);
+        Button stageButton = new Button();
         stageButton.setPrefWidth(140);
         stageButton.setPrefHeight(75);
+        stageButton.getStyleClass().add(getStageButtonStyle(stageName));
         stageButton.setOnAction(e -> openQuestionsStage(stageName));
         addHoverEffect(stageButton);
+        stageButton.setDisable(true); // Initially disable all stage buttons
         return stageButton;
+    }
+
+    private String getStageButtonStyle(String stageName) {
+        switch (stageName) {
+            case "Stage 1":
+                return "stage_one";
+            case "Stage 2":
+                return "stage_two";
+            case "Stage 3":
+                return "stage_three";
+            case "Stage 4":
+                return "stage_four";
+            case "Stage 5":
+                return "stage_five";
+            default:
+                throw new IllegalArgumentException("Invalid stage: " + stageName);
+        }
     }
 
     private List<String> loadCategories() {
@@ -169,29 +176,53 @@ public class Categories extends Application {
         return imagePaths;
     }
 
-    private void checkStageUnlocks(Button stageOne, Button stageTwo, Button stageThree, Button stageFour, Button stageFive) {
+    private void checkStageUnlocks() {
         try {
-            String sql = "SELECT stageId, overall_score FROM score WHERE UserID = ? AND category = ?";
+            String sql = "SELECT math_stage1_score, math_stage2_score, en_stage1_score, en_stage2_score, sci_stage1_score, sci_stage2_score FROM score WHERE UserId = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, userId);
-            pstmt.setString(2, category);
             ResultSet rs = pstmt.executeQuery();
 
-            int[] scores = new int[5];
-            while (rs.next()) {
-                int stageId = rs.getInt("stageId");
-                int overallScore = rs.getInt("overall_score");
-                scores[stageId - 1] = overallScore;
-            }
+            if (rs.next()) {
+                int enStage1Score = rs.getInt("en_stage1_score");
+                int enStage2Score = rs.getInt("en_stage2_score");
+                int mathStage1Score = rs.getInt("math_stage1_score");
+                int mathStage2Score = rs.getInt("math_stage2_score");
+                int sciStage1Score = rs.getInt("sci_stage1_score");
+                int sciStage2Score = rs.getInt("sci_stage2_score");
 
-            stageTwo.setDisable(scores[0] < 15); // Example score requirement for stage 2
-            stageThree.setDisable(scores[1] < 15); // Example score requirement for stage 3
-            stageFour.setDisable(scores[2] < 15); // Example score requirement for stage 4
-            stageFive.setDisable(scores[3] < 15); // Example score requirement for stage 5
+                // Reset all stage buttons first
+                stageOne.setDisable(true);
+                stageTwo.setDisable(true);
+                stageThree.setDisable(true);
+                stageFour.setDisable(true);
+                stageFive.setDisable(true);
+
+                if (category.equals("english")) {
+                    stageOne.setDisable(false);
+                    stageTwo.setDisable(!(enStage1Score >= 3));
+                    stageThree.setDisable(!(enStage2Score >= 8));
+                    stageFour.setDisable(!(enStage1Score >= 15));
+                    stageFive.setDisable(!(enStage2Score >= 18));
+                } else if (category.equals("math")) {
+                    stageOne.setDisable(false);
+                    stageTwo.setDisable(!(mathStage1Score >= 3));
+                    stageThree.setDisable(!(mathStage2Score >= 8));
+                    stageFour.setDisable(!(mathStage1Score >= 15));
+                    stageFive.setDisable(!(mathStage2Score >= 18));
+                } else if (category.equals("science")) {
+                    stageOne.setDisable(false);
+                    stageTwo.setDisable(!(sciStage1Score >= 3));	
+                    stageThree.setDisable(!(sciStage2Score >= 8));
+                    stageFour.setDisable(!(sciStage1Score >= 15));
+                    stageFive.setDisable(!(sciStage2Score >= 18));
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     private void openQuestionsStage(String stage) {
         switch (stage) {

@@ -174,7 +174,6 @@ public class Homepage extends Application {
     }
 
     private void handlePlayButton() {
-        if (Homepage.loggedIn) {
             try {
                 window.close();
                 Stage catStage = new Stage();
@@ -182,15 +181,7 @@ public class Homepage extends Application {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else {
-            try {
-                window.close();
-                Stage loginStage = new Stage();    
-                new Login().start(loginStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+        
     }
 
     private void handleLeaderboardButton() {

@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.sun.prism.paint.Color;
-
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -23,7 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -58,6 +55,17 @@ public class Login extends Application {
 
         window = primaryStage;
         window.setTitle("BRAINZZZ");
+
+        if (isUserLoggedIn(url, username, password)) {
+            try {
+                Stage homeStage = new Stage();
+                new Homepage().start(homeStage);
+                window.close();
+                return;  // Exit start method early since we're switching to Homepage
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 
         GridPane grid = new GridPane();
         grid.getStyleClass().add("root-login-gridpane"); 
@@ -224,6 +232,19 @@ public class Login extends Application {
         window.show();
     }
 
+    private boolean isUserLoggedIn(String url, String username, String password) {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            String sql = "SELECT * FROM logs WHERE loggedIn = 1";
+            try (PreparedStatement statement = connection.prepareStatement(sql);
+                 ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private void login(TextField nameInput, PasswordField passInput, HBox nameLabel, HBox passLabel, HBox passBox, String url, String username, String password) {
         String name = nameInput.getText();
         String passwordValue = passInput.getText();
@@ -322,20 +343,6 @@ public class Login extends Application {
         }
     }
 
-
-    private void resetLoggedInStatus(String url, String username, String password) {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            String sqlReset = "UPDATE logs SET loggedIn = 0";
-            try (PreparedStatement statement = connection.prepareStatement(sqlReset)) {
-                int rowsUpdated = statement.executeUpdate();
-                System.out.println("Rows updated to loggedIn = 0: " + rowsUpdated);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     private void shake(TextField textField) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(50), textField);
         tt.setFromX(0);
@@ -345,5 +352,3 @@ public class Login extends Application {
         tt.play();
     }
 }
-
-//hello
