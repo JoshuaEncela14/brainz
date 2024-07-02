@@ -1,0 +1,267 @@
+.root {
+    -fx-background-image: url('/Images/backgroundd.png'); 
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 10px;
+}
+
+.root-gridpane {
+    -fx-background-image: url('/Images/homepage_background.png'); 
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 10px;
+}
+
+
+
+
+
+.grid-pane {
+    -fx-grid-lines-visible: true; /* Show grid lines */
+     -fx-background-radius: 10px;
+
+
+}
+
+.homepage-play-buttons {
+	-fx-background-image: url('/Images/Homepage_play.png');
+	-fx-background-color: transparent;
+	-fx-pref-width: 130px;
+	-fx-min-height: 67px;
+}
+
+.homepage-logout-buttons {
+	-fx-background-image: url('/Images/Homepage_hover_logout.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 67px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.homepage-logout-buttons:hover {
+	-fx-background-image: url('/Images/Homapage_logout.png');
+}
+
+.homepage-leaderboard-buttons {
+	-fx-background-image: url('/Images/Homepage_hover_leaderboard.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 67px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.homepage-leaderboard-buttons:hover {
+	-fx-background-image: url('/Images/Homapage_leaderboard.png');
+}
+
+.homepage-sound-buttons {
+	-fx-background-image: url('/Images/Homepage_hover_sound.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 67px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.homepage-sound-buttons:hover {
+	-fx-background-image: url('/Images/Homapage_sound.png');
+}
+
+.homepage-no-sound-buttons {
+	-fx-background-image: url('/Images/Homepage_hover_no_sound.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 67px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.homepage-no-sound-buttons:hover {
+	-fx-background-image: url('/Images/Homepage_no_sound.png');
+}
+
+.homepage-quit-buttons {
+	-fx-background-image: url('/Images/Homepage_hover_exit.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 71px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.homepage-quit-buttons:hover {
+	-fx-background-image: url('/Images/Homepage_exit.png');
+}
+
+.settings-button {
+	-fx-background-image: url('/Images/Settings.png');
+	-fx-pref-width: 105px;
+	-fx-min-height: 92;
+	-fx-background-color: transparent;
+}
+
+.back-Button {
+	-fx-background-image: url('/Images/Back_button.png');
+	-fx-pref-width: 85px;
+	-fx-min-height: 60;
+	-fx-max-height: 60;
+	-fx-background-color: transparent;
+}
+
+.label{
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-font-size: 1em;
+	-fx-padding: 0;
+	 -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.enter-username {
+	-fx-background-image: url("/Images/Enter_name.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+     -fx-min-width: 20px; 
+    -fx-max-width: 50px;
+}
+
+.textfield-code {
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-cursor: default;
+	
+}
+
+.login-button {
+    -fx-background-image: url("/Images/Enter_game.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: linear-gradient(#4ED344, #B6DE23);
+    -fx-background-radius: 10;
+    -fx-padding: 10 20;
+    -fx-font-size: 16px;
+    -fx-font-family: "Comic Sans MS";
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #93E454;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 0, 0);
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(#5ED444, #AEE323);
+    -fx-border-color: #AEE323;
+    -fx-text-fill: #ffffff;
+}
+
+.login-button:pressed {
+    -fx-background-color: linear-gradient(#3ECF44, #8CCF23);
+    -fx-border-color: #8CCF23;
+    -fx-text-fill: #ffffff;
+}
+
+
+.label-sign-up {
+	-fx-text-fill: #4D4D4D;
+	-fx-font-weight: normal;
+	-fx-font-size: 0.90em;
+	-fx-padding: 0;
+	 -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.textfield-code-password {
+	-fx-background-image: url('Blind.png');
+    -fx-background-repeat: no-repeat;
+	-fx-background-position: right center;
+
+
+}
+
+.hyperlink-sign-up {
+	-fx-text-fill: #8D2525;
+	-fx-font-weight: bold;
+	-fx-underline: true;
+	-fx-font-size: 0.90em;
+	-fx-padding: 0;
+	-fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.password-field-container {
+    -fx-border-color: #7B3F00;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 0 10 0 20;
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-pref-height: 35;
+    -fx-max-width: 500; 
+}
+
+.name-field-container {
+    -fx-border-color: #7B3F00;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 0 10 0 20;
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-pref-height: 40;
+    -fx-max-width: 500; 
+}
+
+.username-field-container {
+	 -fx-border-color: #7B3F00;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-padding: 0 10 0 20;
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-min-height: 43;
+    -fx-max-height: 100;
+    -fx-max-width: 500; 
+}
+
+.password-field-container-active {
+    -fx-border-color: #7B3F00; 
+    -fx-text-fill: black;
+    -fx-border-width: 2;
+    -fx-border-color: #7B3F00;
+}
+
+.password-field {
+	-fx-background-color: transparent;
+    -fx-background-radius: 20;
+    -fx-padding: 5 0 5 0; /* Adjust padding to match the HBox padding */
+    -fx-border-color: transparent;
+    -fx-pref-height: 35;
+    -fx-pref-width: 500;
+}
+
+-incorrect-input {
+	-fx-text-fill: red;
+	-fx-background-color: red;
+}
+
+.toggle-password {
+	-fx-text-fill: blue;
+	-fx-background-color: red;
+}
+
+.not-toggle-password {
+	
+}

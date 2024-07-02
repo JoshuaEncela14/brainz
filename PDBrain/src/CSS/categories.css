@@ -1,0 +1,120 @@
+.button {
+    -fx-background-color: #383758;
+    -fx-text-fill: #2f3e46;
+    -fx-background-radius: 30;
+    -fx-padding: 10 20; /* Adjust padding to increase button size */
+    -fx-font-size: 14px;
+    -fx-min-width: 120px;
+    -fx-max-width: 240px;
+    -fx-border-insets: 0;
+    -fx-font-weight: bold;
+}
+.root {
+    -fx-background-image: url('/Images/Categories_background.png'); 
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 10px; 
+}
+.button-active {
+    -fx-background-color: #5E6190;
+    -fx-text-fill: #cad2c5;
+    -fx-background-radius: 30;
+    -fx-padding: 10 20; /* Adjust padding to increase button size */
+    -fx-font-size: 14px;
+    -fx-min-width: 120px;
+    -fx-max-width: 240px;
+    -fx-border-insets: 0;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.hbox-category {
+	 -fx-background-color: #313356;
+     -fx-padding: 5 7 5 7;
+     -fx-background-radius: 40;
+}
+
+.Categories-parrot {
+    -fx-background-image: url('/Images/Categories_parrot.png');
+    -fx-padding: 0;
+    -fx-background-size: 54 44; /* Ensure the image fits within the button */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent;
+    -fx-pref-width: 54px; /* Adjust as needed */
+    -fx-pref-height: 44px; /* Adjust as needed */
+}
+
+
+
+.stage_one {
+	-fx-background-image: url('/Images/Categories_stage_one.png');
+    -fx-padding: 0;
+    -fx-background-size: 150px 200px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 150px;
+	-fx-min-height: 200;
+}
+
+.stage_two {
+	-fx-background-image: url('/Images/Categories_stage_two.png');
+    -fx-padding: 0;
+    -fx-background-size: 150px 200px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 150px;
+	-fx-min-height: 200;
+}
+
+.stage_three {
+	-fx-background-image: url('/Images/Categories_stage_four.png');
+    -fx-padding: 0;
+    -fx-background-size: 150px 200px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 150px;
+	-fx-min-height: 200;
+}
+
+.stage_four {
+	-fx-background-image: url('/Images/Categories_stage_three.png');
+    -fx-padding: 0;
+    -fx-background-size: 150px 200px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 150px;
+	-fx-min-height: 200;
+}
+
+.stage_five {
+	-fx-background-image: url('/Images/Categories_stage_five.png');
+    -fx-padding: 0;
+    -fx-background-size: 150px 200px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 150px;
+	-fx-min-height: 200;
+}
+
+.categories-english {
+	-fx-background-image: url('/Images/Categories_english.png');
+	-fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-pref-width: 235px;
+	-fx-min-height: 58px;
+	-fx-text-fill: transparent;
+	-fx-background-color: transparent;
+}
+
+
+
+
+.root {
+    -fx-background-color: #cad2c5;
+}
