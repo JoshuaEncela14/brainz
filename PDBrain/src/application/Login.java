@@ -60,6 +60,7 @@ public class Login extends Application {
         window.setTitle("BRAINZZZ");
 
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("root-login-gridpane"); 
         grid.setAlignment(Pos.TOP_CENTER);
         grid.setPadding(new Insets(20, 10, 10, 20));
         grid.setVgap(5);

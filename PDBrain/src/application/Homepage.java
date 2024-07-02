@@ -172,8 +172,7 @@ public class Homepage extends Application {
 
     private void handleLeaderboardButton() {
         try {
-            window.close();
-            Stage leaderboardStage = new Stage();
+        	Stage leaderboardStage = new Stage();
             new Leaderboard().start(leaderboardStage);
         } catch (Exception ex) {
             ex.printStackTrace();
