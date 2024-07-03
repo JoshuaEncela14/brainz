@@ -18,10 +18,12 @@ import javafx.stage.StageStyle;
 
 public class Results extends Application {
 
-    private Stage questionStage; // Reference to the Question stage
+	private Stage questionStage; // Reference to the Question stage
+    private int score;
 
-    public Results(Stage questionStage) {
+    public Results(Stage questionStage, int score) {
         this.questionStage = questionStage;
+        this.score = score;
     }
 
     public static void main(String[] args) {
@@ -36,29 +38,29 @@ public class Results extends Application {
         GridPane grid = createGridPane();
         grid.getStyleClass().add("result-parent-grid");
 
-        // Creating star images
-        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
-        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
-        star2Good.setTranslateY(-30);
-        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
-
-        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
-        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
-        star2Bad.setTranslateY(-30);
-        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+//        // Creating star images
+//        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
+//        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
+//        star2Good.setTranslateY(-30);
+//        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
+//
+//        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
+//        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+//        star2Bad.setTranslateY(-30);
+//        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
 
         // Creating components
         Label stageLevel = createLabel("LEVEL 1", "analysis-labels");
         HBox stageContainer = createHBox(stageLevel, Pos.CENTER);
 
-        HBox stars = createStarsHBox(starGood, star2Good, star3Bad);
+        HBox stars = createStarsHBox(score);
 
         Label congratulatory = createLabel("COMPLETED", "congrats-labels");
         HBox congratsContainer = createHBox(congratulatory, Pos.CENTER);
 
         HBox timeContent = createTimeContent(25); // Pass the time left value
 
-        HBox scoreContent = createScoreContent(18, 20); // Pass totalScore and overAllScore
+        HBox scoreContent = createScoreContent(score, 5); // Pass totalScore and overAllScore
 
         HBox resultButtons = createResultButtons(primaryStage);
 
@@ -104,10 +106,27 @@ public class Results extends Application {
         return hbox;
     }
 
-    private HBox createStarsHBox(ImageView starGood, ImageView star2Good, ImageView star3Bad) {
+    private HBox createStarsHBox(int score) {
+        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
+        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
+        star2Good.setTranslateY(-30);
+        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
+
+        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+        star2Bad.setTranslateY(-30);
+        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
+
         HBox stars = new HBox(10);
         stars.setAlignment(Pos.CENTER);
-        stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Bad, 10));
+
+        if (score == 5) {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Good, 10));
+        } else if (score >= 3) {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Bad, 10));
+        } else {
+            stars.getChildren().addAll(rotateImage(starGood, -10), star2Bad, rotateImage(star3Bad, 10));
+        }
+
         stars.setPadding(new Insets(30, 0, 10, 0)); // top, right, bottom, left
         return stars;
     }
@@ -162,6 +181,7 @@ public class Results extends Application {
         Button advanceButton = createButton(advance, "Result-buttons", e -> {
             primaryStage.close();
             questionStage.close(); 
+            
         });
 
         HBox resultButtons = new HBox(-20);
