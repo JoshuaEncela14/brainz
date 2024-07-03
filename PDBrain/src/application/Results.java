@@ -163,17 +163,34 @@ public class Results extends Application {
         ImageView advance = new ImageView(new Image("/Images/Advance.png"));
 
         Button homeButton = createButton(home, "Result-buttons", e -> {
-           
-            
             try {
-            	 primaryStage.close();
-                 questionStage.close(); 
-                Stage homeStage = new Stage();
-                new Homepage().start(homeStage);
+                // Get the current stage from the button's parent scene
+                Scene buttonScene = home.getScene();
+                if (buttonScene != null) {
+                    Stage currentStage = (Stage) buttonScene.getWindow();
+                    
+                    // Close the current stage (Results.java)
+                    if (currentStage != null) {
+                        currentStage.close();
+                        questionStage.close();
+                    } else {
+                        System.err.println("Failed to retrieve current stage");
+                    }
+                    
+                    // Create a new stage for Categories.java
+                    Stage categoryStage = new Stage();
+                    
+                    // Start Categories scene
+                    Categories categories = new Categories(); // Assuming Categories.java has a start method
+                    categories.start(categoryStage);
+                } else {
+                    System.err.println("Button is not attached to a scene");
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
+	    
         Button retakeButton = createButton(retake, "Result-buttons", e -> {
             primaryStage.close();
             questionStage.close();
