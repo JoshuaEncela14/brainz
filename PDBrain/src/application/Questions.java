@@ -390,19 +390,24 @@ public class Questions extends Application {
         PreparedStatement stmt = null;
         String scoreColumn = "";
         String stageColumn = "";
+        String totalScoreColumn = "";
+
 
         switch (category) {
             case "english":
                 scoreColumn = "en_stage" + selectedDifficulty + "_score";
                 stageColumn = "en_stage";
+                totalScoreColumn = "en_total_score";
                 break;
             case "math":
                 scoreColumn = "math_stage" + selectedDifficulty + "_score";
                 stageColumn = "math_stage";
+                totalScoreColumn = "math_total_score";
                 break;
             case "science":
                 scoreColumn = "sci_stage" + selectedDifficulty + "_score";
                 stageColumn = "sci_stage";
+                totalScoreColumn = "sci_total_score";
                 break;
             default:
                 // Handle unexpected category (if needed)
@@ -498,6 +503,16 @@ public class Questions extends Application {
                     }
                 }
 
+             // Update the total score
+//                String updateTotalScoreQuery = "UPDATE score SET " + totalScoreColumn + " = (" +
+//                        "SELECT en_stage1_score + en_stage2_score + en_stage3_score " +
+//                        "FROM score WHERE UserId = ?) WHERE UserId = ?";
+//                stmt = conn.prepareStatement(updateTotalScoreQuery);
+//                stmt.setInt(1, userId);
+//                stmt.setInt(2, userId);
+//                int rowsUpdated = stmt.executeUpdate();
+//                System.out.println(totalScoreColumn + " updated for user with userId: " + userId);
+                
             } else {
                 System.out.println("No score found for user with userId: " + userId);
             }

@@ -70,7 +70,7 @@
 }
 
 .stage_three {
-	-fx-background-image: url('/Images/Categories_stage_four.png');
+	-fx-background-image: url('/Images/Categories_stage_three.png');
     -fx-padding: 0;
     -fx-background-size: 150px 200px; 
     -fx-background-repeat: no-repeat;
@@ -81,7 +81,7 @@
 }
 
 .stage_four {
-	-fx-background-image: url('/Images/Categories_stage_three.png');
+	-fx-background-image: url('/Images/Categories_stage_four.png');
     -fx-padding: 0;
     -fx-background-size: 150px 200px; 
     -fx-background-repeat: no-repeat;

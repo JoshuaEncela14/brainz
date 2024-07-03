@@ -1,5 +1,11 @@
 package application;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,6 +23,10 @@ import javafx.stage.StageStyle;
 
 public class Leaderboard extends Application {
 
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "";
+    
     private Stage window;
 
     public static void main(String[] args) {
@@ -32,14 +42,34 @@ public class Leaderboard extends Application {
         
 
         String leadText = "Join the brainz leaderboard! Score high, climb the ranks, and showcase your knowledge in this educational game. ";
-        String[] ranking = new String[10];
-        String[] names = {"Enzon", "Comia", "Aniciete", "Encela"};
-        String[] scores = {"950", "870", "869", "714"};
+        String[] ranking = new String[4]; 
+        String[] names = new String[4];
+        String[] scores = new String[4];
         String[] medals = {"/Images/1st_place_medal.png", "/Images/2nd_place_medal.png", "/Images/3rd_place_medal.png"};
 
-        for (int i = 0; i < ranking.length; i++) {
-            ranking[i] = "# " + (i + 1);
-        }	
+     // Retrieve data from database
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            String query = "SELECT logs.name, score.en_total_score + score.sci_total_score + score.math_total_score AS overall_score " +
+                           "FROM score " +
+                           "INNER JOIN logs ON score.UserId = logs.id " +
+                           "ORDER BY overall_score DESC " +
+                           "LIMIT 4";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+
+            int index = 0;
+            while (rs.next()) {
+                String name = rs.getString("name");
+                int overallScore = rs.getInt("overall_score");
+
+                ranking[index] = "#" + (index + 1);
+                names[index] = name;
+                scores[index] = String.valueOf(overallScore * 10);
+                index++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         
 
         Button exitButton = createButton("leaderboard-quit-buttons", this::handleExitButton);

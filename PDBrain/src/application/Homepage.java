@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -185,13 +186,58 @@ public class Homepage extends Application {
     }
 
     private void handleLeaderboardButton() {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
         try {
-        	Stage leaderboardStage = new Stage();
-            new Leaderboard().start(leaderboardStage);
+            conn = DriverManager.getConnection(url, username, password);
+
+            // Calculate total scores for each subject and update overall_score
+            String updateScoresQuery = "UPDATE score s " +
+                    "JOIN logs l ON s.UserId = l.id " +
+                    "SET " +
+                    "s.en_total_score = COALESCE(s.en_stage3_score, 0), " +
+                    "s.sci_total_score = COALESCE(s.sci_stage3_score, 0), " +
+                    "s.math_total_score =  COALESCE(s.math_stage3_score, 0), " +
+                    "s.overall_score = COALESCE(s.en_stage3_score, 0) + " +
+                    "COALESCE(s.sci_stage3_score, 0) + " +
+                    "COALESCE(s.math_stage3_score, 0)";
+
+            stmt = conn.prepareStatement(updateScoresQuery);
+            int rowsUpdated = stmt.executeUpdate();
+
+            System.out.println("Overall scores updated for all users.");
+
+            // Ascend the table based on the total score and print the top 4 rows with user names
+            String leaderboardQuery = "SELECT l.id AS UserId, l.name, s.overall_score " +
+                    "FROM score s " +
+                    "JOIN logs l ON s.UserId = l.id " +
+                    "ORDER BY s.overall_score DESC LIMIT 4";
+
+            stmt = conn.prepareStatement(leaderboardQuery);
+            ResultSet rs = stmt.executeQuery();
+
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Stage LeaderboardStage = new Stage();
+            new Leaderboard().start(LeaderboardStage);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
+
+
     
 
     private void resetLoggedInStatus(String url, String username, String password) {
