@@ -1,5 +1,5 @@
 package application;
-//hello
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +18,7 @@ import javafx.stage.StageStyle;
 
 public class Results extends Application {
 
-	private Stage questionStage; // Reference to the Question stage
+    private Stage questionStage; // Reference to the Question stage
     private int score;
 
     public Results(Stage questionStage, int score) {
@@ -38,24 +38,13 @@ public class Results extends Application {
         GridPane grid = createGridPane();
         grid.getStyleClass().add("result-parent-grid");
 
-//        // Creating star images
-//        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
-//        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
-//        star2Good.setTranslateY(-30);
-//        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
-//
-//        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
-//        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
-//        star2Bad.setTranslateY(-30);
-//        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
-
         // Creating components
         Label stageLevel = createLabel("LEVEL 1", "analysis-labels");
         HBox stageContainer = createHBox(stageLevel, Pos.CENTER);
 
         HBox stars = createStarsHBox(score);
 
-        Label congratulatory = createLabel("COMPLETED", "congrats-labels");
+        Label congratulatory = createCongratulatoryMessage(score);
         HBox congratsContainer = createHBox(congratulatory, Pos.CENTER);
 
         HBox timeContent = createTimeContent(25); // Pass the time left value
@@ -168,7 +157,7 @@ public class Results extends Application {
                 Scene buttonScene = home.getScene();
                 if (buttonScene != null) {
                     Stage currentStage = (Stage) buttonScene.getWindow();
-                    
+
                     // Close the current stage (Results.java)
                     if (currentStage != null) {
                         currentStage.close();
@@ -176,10 +165,10 @@ public class Results extends Application {
                     } else {
                         System.err.println("Failed to retrieve current stage");
                     }
-                    
+
                     // Create a new stage for Categories.java
                     Stage categoryStage = new Stage();
-                    
+
                     // Start Categories scene
                     Categories categories = new Categories(); // Assuming Categories.java has a start method
                     categories.start(categoryStage);
@@ -190,15 +179,15 @@ public class Results extends Application {
                 ex.printStackTrace();
             }
         });
-	    
+
         Button retakeButton = createButton(retake, "Result-buttons", e -> {
             primaryStage.close();
             questionStage.close();
         });
         Button advanceButton = createButton(advance, "Result-buttons", e -> {
             primaryStage.close();
-            questionStage.close(); 
-            
+            questionStage.close();
+
         });
 
         HBox resultButtons = new HBox(-20);
@@ -216,8 +205,20 @@ public class Results extends Application {
     }
 
     private ImageView rotateImage(ImageView imageView, double angle) {
-        Rotate rotate = new Rotate(angle, 0, 0); 
+        Rotate rotate = new Rotate(angle, 0, 0);
         imageView.getTransforms().add(rotate);
         return imageView;
+    }
+
+    private Label createCongratulatoryMessage(int score) {
+        String message;
+        if (score == 5) {
+            message = "Excellent!";
+        } else if (score >= 3) {
+            message = "Great job!";
+        } else {
+            message = "Try Again";
+        }
+        return createLabel(message, "congrats-labels");
     }
 }
