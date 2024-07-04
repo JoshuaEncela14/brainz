@@ -37,7 +37,7 @@ public class Homepage extends Application {
 
     private Button musicButton; // Declare logoutButton as an instance variable
     private boolean musicPlaying = true;
-    private MediaPlayer mediaPlayer;
+    
     
     
     String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
@@ -82,14 +82,7 @@ public class Homepage extends Application {
 
         
         // Load and play music
-        String source = getClass().getResource("src/Music/ere.mp3").toExternalForm();
-        Media media = new Media(source);
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setVolume(0.9);
 
-        // Loop the music
-        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
         
 
         GridPane grid = createGridPane();

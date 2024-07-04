@@ -1,5 +1,5 @@
 package application;
-//hello
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,12 +18,16 @@ import javafx.stage.StageStyle;
 
 public class Results extends Application {
 
-	private Stage questionStage; // Reference to the Question stage
+    private Stage questionStage;
     private int score;
+    private String selectedCategory;
+    private int selectedDifficulty;
 
-    public Results(Stage questionStage, int score) {
+    public Results(Stage questionStage, int score, String selectedCategory, int selectedDifficulty) {
         this.questionStage = questionStage;
         this.score = score;
+        this.selectedCategory = selectedCategory;
+        this.selectedDifficulty = selectedDifficulty;
     }
 
     public static void main(String[] args) {
@@ -34,22 +38,9 @@ public class Results extends Application {
     public void start(Stage primaryStage) {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-        // Creating main grid layout
         GridPane grid = createGridPane();
         grid.getStyleClass().add("result-parent-grid");
 
-//        // Creating star images
-//        ImageView starGood = new ImageView(new Image("/Images/yeyStar.png"));
-//        ImageView star2Good = new ImageView(new Image("/Images/yeyStar.png"));
-//        star2Good.setTranslateY(-30);
-//        ImageView star3Good = new ImageView(new Image("/Images/yeyStar.png"));
-//
-//        ImageView starBad = new ImageView(new Image("/Images/notYeyStar.png"));
-//        ImageView star2Bad = new ImageView(new Image("/Images/notYeyStar.png"));
-//        star2Bad.setTranslateY(-30);
-//        ImageView star3Bad = new ImageView(new Image("/Images/notYeyStar.png"));
-
-        // Creating components
         Label stageLevel = createLabel("LEVEL 1", "analysis-labels");
         HBox stageContainer = createHBox(stageLevel, Pos.CENTER);
 
@@ -58,28 +49,24 @@ public class Results extends Application {
         Label congratulatory = createLabel("COMPLETED", "congrats-labels");
         HBox congratsContainer = createHBox(congratulatory, Pos.CENTER);
 
-        HBox timeContent = createTimeContent(25); // Pass the time left value
+        HBox timeContent = createTimeContent(25);
 
-        HBox scoreContent = createScoreContent(score, 5); // Pass totalScore and overAllScore
+        HBox scoreContent = createScoreContent(score, 5);
 
         HBox resultButtons = createResultButtons(primaryStage);
 
-        // Creating result container
         VBox resultContainer = new VBox(10);
         resultContainer.setAlignment(Pos.CENTER);
         resultContainer.getStyleClass().add("modal-dialog");
         GridPane.setConstraints(resultContainer, 0, 8);
         resultContainer.getChildren().addAll(stageContainer, stars, congratsContainer, timeContent, scoreContent, resultButtons);
 
-        // Adding result container to grid
         grid.getChildren().addAll(resultContainer);
 
-        // Creating scene and setting style
         Scene scene = new Scene(grid, 300, 500);
         scene.getStylesheets().add("/CSS/design.css");
         scene.setFill(Color.TRANSPARENT);
 
-        // Setting scene to stage
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -127,7 +114,7 @@ public class Results extends Application {
             stars.getChildren().addAll(rotateImage(starGood, -10), star2Bad, rotateImage(star3Bad, 10));
         }
 
-        stars.setPadding(new Insets(30, 0, 10, 0)); // top, right, bottom, left
+        stars.setPadding(new Insets(30, 0, 10, 0));
         return stars;
     }
 
@@ -164,12 +151,10 @@ public class Results extends Application {
 
         Button homeButton = createButton(home, "Result-buttons", e -> {
             try {
-                // Get the current stage from the button's parent scene
                 Scene buttonScene = home.getScene();
                 if (buttonScene != null) {
                     Stage currentStage = (Stage) buttonScene.getWindow();
                     
-                    // Close the current stage (Results.java)
                     if (currentStage != null) {
                         currentStage.close();
                         questionStage.close();
@@ -177,11 +162,9 @@ public class Results extends Application {
                         System.err.println("Failed to retrieve current stage");
                     }
                     
-                    // Create a new stage for Categories.java
                     Stage categoryStage = new Stage();
                     
-                    // Start Categories scene
-                    Categories categories = new Categories(); // Assuming Categories.java has a start method
+                    Categories categories = new Categories();
                     categories.start(categoryStage);
                 } else {
                     System.err.println("Button is not attached to a scene");
@@ -190,15 +173,24 @@ public class Results extends Application {
                 ex.printStackTrace();
             }
         });
-	    
+
         Button retakeButton = createButton(retake, "Result-buttons", e -> {
+            // Close the current Results and previous Questions stages
             primaryStage.close();
             questionStage.close();
+
+            // Retake the questions with the same category and difficulty
+            Questions newQuestions = new Questions(selectedCategory, selectedDifficulty);
+            try {
+                newQuestions.start(new Stage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
+
         Button advanceButton = createButton(advance, "Result-buttons", e -> {
             primaryStage.close();
-            questionStage.close(); 
-            
+            questionStage.close();
         });
 
         HBox resultButtons = new HBox(-20);
@@ -216,7 +208,7 @@ public class Results extends Application {
     }
 
     private ImageView rotateImage(ImageView imageView, double angle) {
-        Rotate rotate = new Rotate(angle, 0, 0); 
+        Rotate rotate = new Rotate(angle, 0, 0);
         imageView.getTransforms().add(rotate);
         return imageView;
     }

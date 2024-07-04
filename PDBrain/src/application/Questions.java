@@ -187,12 +187,12 @@ public class Questions extends Application {
                     btn.setDisable(false);
                 }
             } else {
-                Results resultWindow = new Results(window, newScore);
-                try {
-                    resultWindow.start(new Stage());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            	Results resultWindow = new Results(window, newScore, selectedCategory, selectedDifficulty);
+            	try {
+            	    resultWindow.start(new Stage());
+            	} catch (Exception ex) {
+            	    ex.printStackTrace();
+            	}
             }
         });
         pause.play();
@@ -281,7 +281,7 @@ public class Questions extends Application {
                         }
                     } else {
                     	timeline.stop();
-                        Results resultWindow = new Results(window, newScore);
+                        Results resultWindow = new Results(window, newScore, selectedCategory, selectedDifficulty);
                         try {
                             resultWindow.start(new Stage());
                         } catch (Exception ex) {
