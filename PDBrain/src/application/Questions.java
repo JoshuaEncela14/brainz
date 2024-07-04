@@ -168,6 +168,36 @@ public class Questions extends Application {
             disableIndices.remove(randomIndex); // Ensure unique disables
         }
     }
+    
+    private void handleTimeout() {
+        // Disable all buttons
+        for (Button btn : optionButtons) {
+            btn.setDisable(true);
+        }
+
+        // Start a delay to move to the next question or results
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(ev -> {
+            currentNumber++;
+            if (currentNumber < questions.size()) {
+                updateQuestion();
+                resetTimer();
+                for (Button btn : optionButtons) {
+                    btn.setStyle("");
+                    btn.setDisable(false);
+                }
+            } else {
+                Results resultWindow = new Results(window, newScore);
+                try {
+                    resultWindow.start(new Stage());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        pause.play();
+    }
+
 
     private HBox createTimer() {
         HBox timer = new HBox();
@@ -178,15 +208,19 @@ public class Questions extends Application {
 
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(timerBar.widthProperty(), 960)),
-                new KeyFrame(Duration.seconds(30), new KeyValue(timerBar.widthProperty(), 0))
+                new KeyFrame(Duration.seconds(30), e -> {
+                    timerBar.setWidth(0); // Reset timer bar
+                    handleTimeout();
+                }, new KeyValue(timerBar.widthProperty(), 0))
         );
         timeline.setCycleCount(1);
-        timeline.play();
 
         GridPane.setConstraints(timer, 0, 1, GridPane.REMAINING, 1);
 
         return timer;
     }
+    
+
 
     private void pauseTimer() {
         timeline.pause();
@@ -246,7 +280,8 @@ public class Questions extends Application {
                             btn.setDisable(false);
                         }
                     } else {
-                        Results resultWindow = new Results(window);
+                    	timeline.stop();
+                        Results resultWindow = new Results(window, newScore);
                         try {
                             resultWindow.start(new Stage());
                         } catch (Exception ex) {
@@ -316,6 +351,10 @@ public class Questions extends Application {
 
     private void updateQuestion() {
         if (currentNumber < questions.size()) {
+        	
+            timeline.stop(); // Stop previous timeline if any
+            timeline.playFromStart(); // Restart the timer
+            
             Question currentQuestion = questions.get(currentNumber);
             questionLabel.setText(currentQuestion.getQuestionText());
             currentQuestionLabel.setText((currentNumber + 1) + " / " + questions.size());
@@ -390,24 +429,19 @@ public class Questions extends Application {
         PreparedStatement stmt = null;
         String scoreColumn = "";
         String stageColumn = "";
-        String totalScoreColumn = "";
-
 
         switch (category) {
             case "english":
                 scoreColumn = "en_stage" + selectedDifficulty + "_score";
                 stageColumn = "en_stage";
-                totalScoreColumn = "en_total_score";
                 break;
             case "math":
                 scoreColumn = "math_stage" + selectedDifficulty + "_score";
                 stageColumn = "math_stage";
-                totalScoreColumn = "math_total_score";
                 break;
             case "science":
                 scoreColumn = "sci_stage" + selectedDifficulty + "_score";
                 stageColumn = "sci_stage";
-                totalScoreColumn = "sci_total_score";
                 break;
             default:
                 // Handle unexpected category (if needed)
@@ -503,16 +537,6 @@ public class Questions extends Application {
                     }
                 }
 
-             // Update the total score
-//                String updateTotalScoreQuery = "UPDATE score SET " + totalScoreColumn + " = (" +
-//                        "SELECT en_stage1_score + en_stage2_score + en_stage3_score " +
-//                        "FROM score WHERE UserId = ?) WHERE UserId = ?";
-//                stmt = conn.prepareStatement(updateTotalScoreQuery);
-//                stmt.setInt(1, userId);
-//                stmt.setInt(2, userId);
-//                int rowsUpdated = stmt.executeUpdate();
-//                System.out.println(totalScoreColumn + " updated for user with userId: " + userId);
-                
             } else {
                 System.out.println("No score found for user with userId: " + userId);
             }
@@ -528,7 +552,6 @@ public class Questions extends Application {
             }
         }
     }
-
 
 }
 

@@ -70,27 +70,28 @@ public class Login extends Application {
         GridPane grid = new GridPane();
         grid.getStyleClass().add("root-login-gridpane"); 
         grid.setAlignment(Pos.TOP_CENTER);
-        grid.setPadding(new Insets(20, 10, 10, 20));
+        grid.setPadding(new Insets(100, 10, 10, 20));
         grid.setVgap(5);
         grid.setHgap(10);
         
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPrefWidth(950);
-        grid.getColumnConstraints().add(columnConstraints);
-
-        Button backButton = new Button();
-        backButton.getStyleClass().add("back-Button");
-        backButton.setOnAction(e -> {
-            try {
-                window.close();
-                Stage HomeStage = new Stage();
-                new Homepage().start(HomeStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-        GridPane.setHalignment(backButton, HPos.LEFT);
-        GridPane.setConstraints(backButton, 0, 0);
+//        ColumnConstraints columnConstraints = new ColumnConstraints();
+//        columnConstraints.setPrefWidth(950);
+//        grid.getColumnConstraints().add(columnConstraints);
+//
+//        Button backButton = new Button();
+//        backButton.getStyleClass().add("back-Button");
+//        backButton.setOnAction(e -> {
+//            try {
+//                window.close();
+//                Stage HomeStage = new Stage();
+//                new Homepage().start(HomeStage);
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        });
+//        
+//        GridPane.setHalignment(backButton, HPos.LEFT);
+//        GridPane.setConstraints(backButton, 0, 0);
         
         ImageView logo = new ImageView(new Image("/Images/logooo.png"));
         GridPane.setHalignment(logo, HPos.CENTER);
@@ -202,7 +203,7 @@ public class Login extends Application {
         });
 
         grid.getChildren().addAll(
-                backButton,
+//                backButton,
                 nameLabel, nameInput,
                 passLabel, passBox,
                 hboxlog,
@@ -302,8 +303,8 @@ public class Login extends Application {
 
                         try {
                             window.close();
-                            Stage catStage = new Stage();
-                            new Categories().start(catStage);
+                            Stage homeStage = new Stage();
+                            new Homepage().start(homeStage);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

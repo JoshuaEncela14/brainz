@@ -1,13 +1,17 @@
 package application;
 //hello
 import java.io.File;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import javafx.application.Application;
+import javafx.embed.swing.JFXPanel;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,6 +28,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 public class Homepage extends Application {
 
@@ -32,6 +37,7 @@ public class Homepage extends Application {
 
     private Button musicButton; // Declare logoutButton as an instance variable
     private boolean musicPlaying = true;
+    private MediaPlayer mediaPlayer;
     
     
     String url = "jdbc:mysql://localhost:3306/brainzmcq_mysql";
@@ -42,12 +48,48 @@ public class Homepage extends Application {
         launch(args);
     }
 
+//    MediaPlayer musicplayer; {
+//        
+//        /* Put your music file IN THE JAR, "getResourceAsStream()" is
+//        the API you want to use. Put the DollyParton.mp3 into the Windows
+//        folder src/rockymountain. NetBeans automatically copies the mp3
+//        to the folder build/classes/rockymountain. */
+//
+//            Media mp3MusicFile = new Media(getClass().getResource("/Music/ere.mp3").toExternalForm()); 
+//            
+//            musicplayer = new MediaPlayer(mp3MusicFile);
+//            musicplayer.setAutoPlay(true);
+//            musicplayer.setVolume(0.9);   // from 0 to 1      
+//      
+//            //***************** loop (repeat) the music  ******************
+//            musicplayer.setOnEndOfMedia(new Runnable() {    
+//            public void run() {
+//            musicplayer.seek(Duration.ZERO); 
+//           }
+//             });  
+//          //*************** end of loop (repeat) the music  **************
+//            
+//        }
+
+    //***********
     @Override
     public void start(Stage primaryStage) {
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         window = primaryStage;
         window.setTitle("BRAINZZZ");
+        
+
+        
+        // Load and play music
+        String source = getClass().getResource("src/Music/ere.mp3").toExternalForm();
+        Media media = new Media(source);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setVolume(0.9);
+
+        // Loop the music
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
         
 
         GridPane grid = createGridPane();
@@ -196,12 +238,12 @@ public class Homepage extends Application {
             String updateScoresQuery = "UPDATE score s " +
                     "JOIN logs l ON s.UserId = l.id " +
                     "SET " +
-                    "s.en_total_score = COALESCE(s.en_stage3_score, 0), " +
-                    "s.sci_total_score = COALESCE(s.sci_stage3_score, 0), " +
-                    "s.math_total_score =  COALESCE(s.math_stage3_score, 0), " +
-                    "s.overall_score = COALESCE(s.en_stage3_score, 0) + " +
-                    "COALESCE(s.sci_stage3_score, 0) + " +
-                    "COALESCE(s.math_stage3_score, 0)";
+                    "s.en_total_score = COALESCE(NULLIF(s.en_stage3_score, 0), NULLIF(s.en_stage2_score, 0), s.en_stage1_score, 0), " +
+                    "s.sci_total_score = COALESCE(NULLIF(s.sci_stage3_score, 0), NULLIF(s.sci_stage2_score, 0), s.sci_stage1_score, 0), " +
+                    "s.math_total_score = COALESCE(NULLIF(s.math_stage3_score, 0), NULLIF(s.math_stage2_score, 0), s.math_stage1_score, 0), " +
+                    "s.overall_score = COALESCE(NULLIF(s.en_stage3_score, 0), NULLIF(s.en_stage2_score, 0), s.en_stage1_score, 0) + " +
+                    "COALESCE(NULLIF(s.sci_stage3_score, 0), NULLIF(s.sci_stage2_score, 0), s.sci_stage1_score, 0) + " +
+                    "COALESCE(NULLIF(s.math_stage3_score, 0), NULLIF(s.math_stage2_score, 0), s.math_stage1_score, 0)";
 
             stmt = conn.prepareStatement(updateScoresQuery);
             int rowsUpdated = stmt.executeUpdate();
@@ -217,11 +259,17 @@ public class Homepage extends Application {
             stmt = conn.prepareStatement(leaderboardQuery);
             ResultSet rs = stmt.executeQuery();
 
-            
+            // Printing the top 4 users on the leaderboard
+            while (rs.next()) {
+                int userId = rs.getInt("UserId");
+                String name = rs.getString("name");
+                int overallScore = rs.getInt("overall_score");
+                System.out.println("UserId: " + userId + ", Name: " + name + ", Overall Score: " + overallScore);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
+            try { 	
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
@@ -235,6 +283,7 @@ public class Homepage extends Application {
             ex.printStackTrace();
         }
     }
+
 
 
 

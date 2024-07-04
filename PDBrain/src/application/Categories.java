@@ -2,12 +2,14 @@ package application;
 
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -78,6 +80,29 @@ public class Categories extends Application {
         grid.setPadding(new Insets(30, 0, 10, 20));
         grid.setVgap(5);
         grid.setHgap(0);
+        
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPrefWidth(950);
+        grid.getColumnConstraints().add(columnConstraints);
+
+        
+        Button backButton = new Button();
+        backButton.getStyleClass().add("back-Button");
+        backButton.setOnAction(e -> {
+            try {
+                window.close();
+                Stage HomeStage = new Stage();
+                new Homepage().start(HomeStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        
+        GridPane.setHalignment(backButton, HPos.LEFT);
+        GridPane.setConstraints(backButton, 0, 0);
+        HBox.setMargin(backButton, new Insets(0, 50, 0, 0));
+
+
 
         // Load image paths for categories
         List<String> imagePaths = loadCategories();
@@ -105,9 +130,10 @@ public class Categories extends Application {
         }
 
         hboxCategory.getStyleClass().add("hbox-category");
+        GridPane.setHalignment(hboxCategory, HPos.CENTER);
 
-        GridPane.setConstraints(hboxCategory, 0, 0);
-        GridPane.setMargin(hboxCategory, new Insets(0, 0, 0, 40));
+        GridPane.setConstraints(hboxCategory, 0, 1);
+        GridPane.setMargin(hboxCategory, new Insets(0, 0, -20, -5));
 
         // Stage buttons
         stageOne = createStageButton("Stage 1");
@@ -128,11 +154,11 @@ public class Categories extends Application {
         vboxStages.getChildren().addAll(hboxRow1);
 
         // Add VBox to the GridPane
-        GridPane.setConstraints(vboxStages, 0, 5);
+        GridPane.setConstraints(vboxStages, 0, 4);
         GridPane.setColumnSpan(vboxStages, 5);
         GridPane.setValignment(vboxStages, javafx.geometry.VPos.CENTER);
 
-        grid.getChildren().addAll(hboxCategory, vboxStages);
+        grid.getChildren().addAll(backButton, hboxCategory, vboxStages);
 
         Scene scene = new Scene(grid, 960, 520);
         scene.getStylesheets().add("/CSS/categories.css");

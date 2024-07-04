@@ -15,6 +15,16 @@
     -fx-background-repeat: no-repeat;
     -fx-background-radius: 10px; 
 }
+
+.back-Button {
+	-fx-background-image: url('/Images/Back_button.png');
+	-fx-pref-width: 85px;
+    -fx-background-repeat: no-repeat;
+
+	-fx-min-height: 60;
+	-fx-max-height: 60;
+	-fx-background-color: transparent;
+}
 .button-active {
     -fx-background-color: #5E6190;
     -fx-text-fill: #cad2c5;
@@ -32,6 +42,7 @@
 	 -fx-background-color: #313356;
      -fx-padding: 5 7 5 7;
      -fx-background-radius: 40;
+     -fx-max-width: 750px;
 }
 
 .Categories-parrot {

@@ -66,7 +66,7 @@ public class Signup extends Application {
         grid.getStyleClass().add("root-login-gridpane"); 
         grid.setAlignment(Pos.TOP_CENTER);
 
-        grid.setPadding(new Insets(20, 10, 10, 20));
+        grid.setPadding(new Insets(50, 10, 10, 20));
         grid.setVgap(5);
         grid.setHgap(10);
 
@@ -74,16 +74,16 @@ public class Signup extends Application {
         columnConstraints.setPrefWidth(950); 
         grid.getColumnConstraints().add(columnConstraints);
         
-        Button backButton = new Button();
-        GridPane.setMargin(backButton, new Insets(0, 0, 0, 0));
-        backButton.getStyleClass().add("back-Button");
-        
-        backButton.setOnAction(e -> {
-        	window.close();
-        });
-        
-        GridPane.setHalignment(backButton, HPos.LEFT);
-        GridPane.setConstraints(backButton, 0, 0, 1, 5);
+//        Button backButton = new Button();
+//        GridPane.setMargin(backButton, new Insets(0, 0, 0, 0));
+//        backButton.getStyleClass().add("back-Button");
+//        
+//        backButton.setOnAction(e -> {
+//        	window.close();
+//        });
+//        
+//        GridPane.setHalignment(backButton, HPos.LEFT);
+//        GridPane.setConstraints(backButton, 0, 0, 1, 5);
         
         
         ImageView logo = new ImageView(new Image("/Images/logooo.png"));
@@ -301,7 +301,7 @@ public class Signup extends Application {
 
         // Adding components to grid
         grid.getChildren().addAll(
-        		backButton,
+//        		backButton,
                 nameLabel, nameInput,
                 passLabel, passBox,
                 confirmLabel, confirmPassBox,
@@ -416,8 +416,9 @@ public class Signup extends Application {
 
                         // Close signup window and open login window
                         window.close();
-                        Stage loginStage = new Stage();
-                        new Login().start(loginStage);
+                        Stage homeStage = new Stage();
+                        
+                        new Homepage().start(homeStage);
                     }
                 }
 
