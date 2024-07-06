@@ -1,7 +1,7 @@
 package application;
 //hello
 import java.io.File;
-
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -77,13 +78,9 @@ public class Homepage extends Application {
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         window = primaryStage;
-        window.setTitle("BRAINZZZ");
-        
+        window.setTitle("BRAINZZZ"); 
 
-        
-        // Load and play music
-
-        
+        music();
 
         GridPane grid = createGridPane();
         grid.getStyleClass().add("root-gridpane"); 
@@ -94,6 +91,14 @@ public class Homepage extends Application {
 
         window.setScene(scene);
         window.show();
+    }
+    
+    MediaPlayer mediaPlayer;
+    public void music() {
+    	String audioFilePath = "C:\\Users\\Joshua\\git\\pards\\pls\\resources\\ere.mp3";
+        Media audioFile = new Media(new File(audioFilePath).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(audioFile);
+    	mediaPlayer.play();
     }
 
     private GridPane createGridPane() {

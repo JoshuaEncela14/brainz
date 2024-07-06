@@ -22,13 +22,23 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>0</id>
+			<id>1720249753399</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
 				<id>org.eclipse.core.resources.regexFilterMatcher</id>
-				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
+				<arguments>1.0-name-matches-false-true-node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
+	<variableList>
+		<variable>
+			<name>ere</name>
+			<value>file:/C:/Users/Joshua/Downloads/ere.mp3</value>
+		</variable>
+		<variable>
+			<name>eree</name>
+			<value>file:/C:/Users/Joshua/Downloads/ere.mp3</value>
+		</variable>
+	</variableList>
 </projectDescription>

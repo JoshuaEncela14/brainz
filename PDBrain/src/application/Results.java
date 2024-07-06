@@ -22,6 +22,7 @@ public class Results extends Application {
     private int score;
     private String selectedCategory;
     private int selectedDifficulty;
+    private Button retakeButton;
 
     public Results(Stage questionStage, int score, String selectedCategory, int selectedDifficulty) {
         this.questionStage = questionStage;
@@ -112,6 +113,7 @@ public class Results extends Application {
             stars.getChildren().addAll(rotateImage(starGood, -10), star2Good, rotateImage(star3Bad, 10));
         } else {
             stars.getChildren().addAll(rotateImage(starGood, -10), star2Bad, rotateImage(star3Bad, 10));
+            
         }
 
         stars.setPadding(new Insets(30, 0, 10, 0));
@@ -174,7 +176,7 @@ public class Results extends Application {
             }
         });
 
-        Button retakeButton = createButton(retake, "Result-buttons", e -> {
+        retakeButton = createButton(retake, "Result-buttons", e -> {
             // Close the current Results and previous Questions stages
             primaryStage.close();
             questionStage.close();
@@ -188,10 +190,25 @@ public class Results extends Application {
             }
         });
 
+        
+        
         Button advanceButton = createButton(advance, "Result-buttons", e -> {
             primaryStage.close();
             questionStage.close();
+            Questions newQuestions = new Questions(selectedCategory, selectedDifficulty + 1);
+            try {
+                newQuestions.start(new Stage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
+        
+        if (score < 3) {
+        	advanceButton.setDisable(true);
+        }
+        
+        
+
 
         HBox resultButtons = new HBox(-20);
         resultButtons.setAlignment(Pos.CENTER);
