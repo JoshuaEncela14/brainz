@@ -1,0 +1,350 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+.root {
+	-fx-background-color: #cad2c5;
+}
+
+.label{
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-font-size: 1em;
+	-fx-padding: 0;
+	 -fx-border-insets: 0;
+    -fx-background-insets: 0;
+}
+
+.textfield-code {
+	-fx-text-fill: #2f3e46;
+	-fx-font-weight: bold;
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-cursor: default;
+	
+}
+
+
+
+.button.login {
+	-fx-background-color: #2f3e46;
+	-fx-text-fill: #cad2c5;
+	-fx-background-radius: 4;
+	-fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-min-width: 120px; 
+    -fx-max-width: 240px;
+	-fx-border-insets: 0;
+	-fx-font-weight: bold;
+}
+
+.button-light {
+	-fx-background-color: #84a98c;
+	-fx-text-fill: #2f3e46;
+	-fx-background-radius: 4;
+	-fx-padding: 10 20; 
+    -fx-font-size: 14px;
+    -fx-min-width: 120px;
+    -fx-max-width: 240px;
+	-fx-border-insets: 0;
+	-fx-font-weight: bold;
+}
+
+.hbox-questions-header {
+	-fx-background-color: #000000;
+	-fx-pref-width: 960px;	
+	-fx-pref-height: 63px;	
+	-fx-padding: 5;
+}
+
+.hbox-question-tracking {
+	-fx-background-color: #000000;
+	-fx-background-radius: 2;
+	-fx-border-color: rgba(217, 217, 217, 0.3); 
+    -fx-border-width: 2px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 2px;
+    -fx-pref-width: 90px;	
+	-fx-max-height: 42px;	
+	-fx-padding: 0; 
+}
+
+.label-question {
+	-fx-text-fill: #FFFFFF;
+	-fx-font-weight: bold;
+	-fx-font-size: 1.2em;
+	-fx-padding: 0;
+}
+
+.lifeline-buttons {
+  	-fx-background-color: rgba(217, 217, 217, 0.3);
+    -fx-background-image: url('../Images/paimonn.png');
+    -fx-background-size: 50% 70%; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-padding: 0; 
+    -fx-graphic-text-gap: 0; 
+    -fx-background-radius: 2;
+    
+}
+
+.hbox-questions-timer {
+	-fx-background-color: rgba(217, 217, 217, 1);
+	-fx-pref-width: 960px;	
+	-fx-pref-height: 5px;	
+	-fx-padding: 0;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 10, 0.5, 0, 0);
+}
+
+.label-question-label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: 600;
+    -fx-font-size: 1.75em;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+	-fx-wrap-text: true; 
+    -fx-text-alignment: center; 
+
+}
+
+.hbox-questions-container {
+	-fx-background-color: #FFFFFF;
+	-fx-max-width: 800px;	
+	-fx-pref-height: 180px;	
+	-fx-padding: 20px;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 20, 0, -4, 8);
+	-fx-background-radius: 12;
+	-fx-border-color: #F7F7F7; 
+    -fx-border-width: 2px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 12px;
+}
+
+.label-question-option {
+	-fx-background-color: rgba(255, 255, 255, 0.7);
+	-fx-background-radius: 15px;
+	-fx-pref-width: 300px;
+	-fx-pref-height: 50px;
+	-fx-border-color: #E0E0E0; 
+    -fx-border-width: 1.2px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 15px;
+    -fx-padding: 5px;
+    -fx-text-fill: #FFF23F;
+}
+
+.label-question-answer {
+	-fx-text-fill: #000000;
+    -fx-font-weight: 600;
+    -fx-font-size: 20px;
+}
+
+.hbox-questions-optionAC {
+	-fx-background-color: transparent;
+	-fx-max-width: 800px;	
+	-fx-pref-height: 50px;	
+	-fx-background-radius: 8;
+	-fx-border-color: #E0E0E0; 
+    -fx-border-width: 2px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 12px;
+}
+
+
+.modal-dialog {
+    -fx-background-radius: 24; /* Rounded corners */
+    -fx-padding: 20;
+    -fx-background-color: #F1F1F1;
+    -fx-border-radius: 24;
+    -fx-background-radius: 25px;
+    -fx-border-color: rgba(200, 200, 200, 0.1);
+    -fx-border-width: 10px;
+}
+
+.result-parent-grid {
+	-fx-background-color: transparent;
+    
+}
+
+.analysis-labels {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #871B1B;
+    -fx-font-weight: bold;
+    -fx-font-size: 25px;
+    
+}
+
+.congrats-labels {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #871B1B;
+    -fx-font-weight: bold;
+    -fx-font-size: 32px;
+}
+
+.timer-labels {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #871B1B;
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+}
+
+.Hbox-time-content {
+	-fx-background-radius: 24;
+	-fx-pref-height: 35px;
+	-fx-max-width: 120px;
+	-fx-background-color: #F1F1F1;
+	-fx-padding: 0 0 0 10;	
+	-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.2) , 10, 0.0 , 0 , 3 );	
+}
+
+
+.Result-buttons {
+	-fx-pref-height: 10px;
+	-fx-max-width: 10px;
+	-fx-background-color: transparent; 
+	-fx-padding: 0;
+}
+
+.leaderboard-container {
+	-fx-background-color: #E3F3E4;
+	-fx-background-radius: 15px;
+	-fx-max-width: 800px;	
+	-fx-pref-height: 450px;	
+	-fx-padding: 30px;
+	-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 20, 0, -4, 8);
+	-fx-background-radius: 12;
+	-fx-border-color: #016805;
+    -fx-border-width: 5px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 15px;
+    -fx-wrap-text: true;
+}
+
+.leaderboard-quit-buttons {
+	-fx-background-image: url('../Images/Homepage_hover_exit.png');
+    -fx-padding: 0;
+    -fx-background-size: 71px 71px; 
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+	-fx-background-color: transparent;
+	-fx-pref-width: 72px;
+	-fx-min-height: 80;
+}
+
+.leaderboard-quit-buttons:hover {
+	-fx-background-image: url('../Images/Homepage_exit.png');
+}
+
+.label-leaderboard {
+	-fx-background-image: url('../Images/Homepage_leaderboard_scores.png');
+	-fx-background-color: transparent;
+	-fx-max-width: 213px;
+	-fx-min-height: 56px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    
+}
+
+.label-under-leaderboard {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: rgba(0, 0, 0, 0.6);
+    -fx-font-size: 1.2em;
+    -fx-font-weight: 500;
+    -fx-wrap-text: true; /* Enable text wrapping */
+    -fx-text-alignment: center; /* Center align the text */
+     /* Set the maximum width for the label */
+
+}
+
+.rank1ContainerLeft-leaderboard {
+	-fx-background-color: #016805;
+	-fx-pref-width: 85px;	
+	-fx-pref-height: 55px;	
+	-fx-padding: 10px;
+	-fx-background-radius: 35;
+	-fx-text-fill: #FFFFFF;
+}
+
+.rank1ContainerRight-leaderboard {
+	-fx-background-color: #016805;
+	-fx-max-width: 400px;	
+	-fx-pref-height: 55px;	
+	-fx-padding: 10px 30px 10px 30px;
+	-fx-background-radius: 35;
+	-fx-text-fill: #FFFFFF;
+}
+
+.rank1-label-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #FFFFFF;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.60em;
+}
+
+.rank1-label-right-score-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #FFFFFF;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.2em;
+}
+
+.rank1-label-right-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #FFFFFF;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.2em;
+   	-fx-min-width: 100px;
+}
+
+
+.rankingContainerLeft-leaderboard {
+	-fx-background-color: transparent;
+	-fx-pref-width: 85px;	
+	-fx-pref-height: 55px;	
+	-fx-padding: 10px;
+	-fx-background-radius: 35;
+	-fx-text-fill: #FFFFFF;
+	-fx-border-color: rgba(0, 0, 0, 0.6);
+    -fx-border-width: 1px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 35px;
+	
+}
+
+.rankingContainerRight-leaderboard {
+	-fx-background-color: transparent;
+	-fx-max-width: 400px;	
+	-fx-pref-height: 55px;	
+	-fx-padding: 10px 30px 10px 30px;
+	-fx-background-radius: 35;
+	-fx-text-fill: #FFFFFF;
+	-fx-border-color: rgba(0, 0, 0, 0.6);
+    -fx-border-width: 1px;
+    -fx-border-style: solid; 
+    -fx-border-radius: 35px;
+}
+
+.ranking-label-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #000000;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.4em;
+    
+}
+
+.ranking-label-right-score-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #000000;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.2em;
+}
+
+.ranking-label-right-leaderboard {
+	-fx-font-family: 'Arial';
+	-fx-text-fill: #000000;
+    -fx-font-weight: 900;
+    -fx-font-size: 1.2em;
+   	-fx-min-width: 100px;
+}
+
+
+
+
